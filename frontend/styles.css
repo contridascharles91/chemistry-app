@@ -5234,7 +5234,8 @@ body.light-mode .health-tip-item:hover { background: rgba(0,0,0,0.03); }
 .auth-logo {
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(135deg, #f0b429, #a855f7);
+  font-family: 'Syne', 'DM Sans', sans-serif;
+  background: linear-gradient(135deg, #f0b429, #8b7cf8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -5904,7 +5905,7 @@ body.light-mode .health-tip-item:hover { background: rgba(0,0,0,0.03); }
 
 /* ── CSS VARIABLES: consolidated into single :root below (line ~6960) ── */
 *,*::before,*::after{box-sizing:border-box}
-body{font-family:'Inter','DM Sans',system-ui,sans-serif!important;background:var(--bg-base)!important;-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important;text-rendering:optimizeLegibility!important}
+body{font-family:'DM Sans','Inter',system-ui,sans-serif!important;background:var(--bg-base)!important;-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important;text-rendering:optimizeLegibility!important}
 .chat-history-sidebar{background:#13141a!important;border-right:1px solid rgba(255,255,255,0.07)!important;box-shadow:4px 0 24px rgba(0,0,0,.4)!important;width:240px!important}
 .chunks-sidebar-header{height:auto!important;padding:0!important;border-bottom:none!important}
 .chunks-logo{font-family:'DM Sans',sans-serif!important;font-size:15px!important;font-weight:700!important;letter-spacing:-0.01em!important;background:none!important;-webkit-background-clip:unset!important;-webkit-text-fill-color:unset!important;background-clip:unset!important;color:#f0f0f0!important}
@@ -5957,6 +5958,236 @@ body{font-family:'Inter','DM Sans',system-ui,sans-serif!important;background:var
 .ctx-suggestion{display:flex;align-items:center;gap:10px;padding:11px 8px;color:rgba(255,255,255,0.75);font-size:14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);transition:color .15s;border-radius:6px;}
 .ctx-suggestion:last-child{border-bottom:none;}
 .ctx-suggestion:hover{color:#fff;background:rgba(255,255,255,0.04);}
+
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BUTTON CLASSES — replaces onmouseover/onmouseout
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* Primary CTA — amber-violet gradient (subscribe, onboarding next) */
+.btn-primary-cta {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #f0b429, #8b7cf8);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(240,180,41,0.35);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.btn-primary-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(240,180,41,0.50);
+}
+.btn-primary-cta:active { transform: translateY(0); }
+
+/* Ghost dim — transparent, border, text brightens */
+.btn-ghost-dim {
+  width: 100%;
+  padding: 11px 20px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  color: rgba(255,255,255,0.40);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-ghost-dim:hover { color: rgba(255,255,255,0.72); border-color: rgba(255,255,255,0.18); }
+
+/* Onboarding skip — flex partial width, ghost */
+.btn-obt-skip {
+  flex: 1;
+  padding: 11px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  color: rgba(255,255,255,0.35);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.btn-obt-skip:hover { color: rgba(255,255,255,0.62); }
+
+/* Onboarding next — flex primary */
+.btn-obt-next {
+  flex: 2;
+  padding: 11px;
+  background: linear-gradient(135deg, #f0b429, #8b7cf8);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(240,180,41,0.35);
+  transition: transform 0.15s;
+}
+.btn-obt-next:hover { transform: translateY(-1px); }
+.btn-obt-next:active { transform: translateY(0); }
+
+/* Study flow — borderless dim text, text brightens to white */
+.btn-sf-skip {
+  background: none;
+  border: none;
+  color: rgba(232,234,240,0.30);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.btn-sf-skip:hover { color: #e8eaf0; }
+
+/* Study flow retake — text brightens to amber */
+.btn-sf-retake {
+  background: none;
+  border: none;
+  color: rgba(232,234,240,0.30);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  padding: 6px;
+  transition: color 0.15s;
+}
+.btn-sf-retake:hover { color: #fcd34d; }
+
+/* Study flow — amber ghost chip */
+.btn-amber-chip {
+  padding: 4px 10px;
+  background: rgba(240,180,41,0.12);
+  border: 1px solid rgba(240,180,41,0.25);
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  color: #fcd34d;
+  cursor: pointer;
+  transition: background 0.14s;
+}
+.btn-amber-chip:hover { background: rgba(240,180,41,0.22); }
+
+/* Study flow — start new exam (very dim, brightens slightly) */
+.btn-sf-new {
+  background: none;
+  border: none;
+  color: rgba(232,234,240,0.25);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: color 0.15s;
+}
+.btn-sf-new:hover { color: rgba(232,234,240,0.52); }
+
+/* Workspace suggestion cards (welcome screen action buttons) */
+.btn-suggestion {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.55);
+  font-size: 13px;
+  padding: 9px 14px;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.btn-suggestion:hover {
+  border-color: rgba(240,180,41,0.35);
+  color: white;
+  background: rgba(240,180,41,0.06);
+}
+
+/* Modal cancel — white ghost */
+.btn-modal-cancel {
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.70);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-modal-cancel:hover { background: rgba(255,255,255,0.10); }
+
+/* Modal delete — danger red */
+.btn-modal-delete {
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 9px;
+  border: none;
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(244,63,94,0.30);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.btn-modal-delete:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* Icon close button (modal X) */
+.btn-icon-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.30);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.14s;
+}
+.btn-icon-close:hover { color: white; }
+
+/* Flashcard modal cancel */
+.btn-fc-cancel {
+  flex: 1;
+  padding: 11px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.50);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-fc-cancel:hover { background: rgba(255,255,255,0.09); }
+
+/* ── Section label utility (DM Mono uppercase — use on all section headers) */
+.section-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 8px;
+  display: block;
+}
 
 /* Attachment chip */
 .attachment-chip {
@@ -11102,6 +11333,7 @@ button.wbp-book:active { transform: translateY(-1px); }
 .welcome-title {
   font-size: 36px !important;
   font-weight: 900 !important;
+  font-family: 'Syne', 'DM Sans', sans-serif !important;
   letter-spacing: -1.2px !important;
   line-height: 1.12 !important;
   color: #e8eaf0 !important;

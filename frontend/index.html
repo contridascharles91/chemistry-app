@@ -934,7 +934,7 @@
 
     <!-- Live sample Q&A — shows the product working -->
     <div style="width:100%;background:rgba(10,11,20,0.9);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 15px;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.22);margin-bottom:10px;">See it in action ↓</div>
+      <div class="section-label" style="color:rgba(255,255,255,0.22);margin-bottom:10px;">See it in action ↓</div>
       <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
         <div style="background:linear-gradient(135deg,rgba(240,180,41,0.18),rgba(139,124,248,0.14));border:1px solid rgba(240,180,41,0.28);border-radius:12px 12px 3px 12px;padding:8px 12px;max-width:88%;font-size:12.5px;color:rgba(255,255,255,0.8);line-height:1.4;">Explain Le Chatelier's Principle in simple terms</div>
       </div>
@@ -954,7 +954,7 @@
 
     <!-- What's FREE — positive framing first -->
     <div class="auth-features">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:2px;">Free to start — no card needed</div>
+      <div class="section-label" style="color:rgba(255,255,255,0.25);margin-bottom:2px;">Free to start — no card needed</div>
       <div class="auth-feature-row">
         <div class="auth-check">✓</div>
         <span>20 AI questions/day · grounded to your exact textbook page</span>
@@ -1009,7 +1009,7 @@
 
     <!-- Price badge -->
     <div style="width:100%;background:linear-gradient(135deg,rgba(240,180,41,0.12),rgba(168,85,247,0.12));border:1px solid rgba(240,180,41,0.3);border-radius:14px;padding:18px 20px;text-align:center;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:6px;">Subscription</div>
+      <div class="section-label" style="color:rgba(255,255,255,0.35);margin-bottom:6px;">Subscription</div>
       <div style="font-size:36px;font-weight:800;color:white;line-height:1;">₱199<span style="font-size:15px;font-weight:400;color:rgba(255,255,255,0.4)">/mo</span></div>
       <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:4px;">Full access to all features</div>
     </div>
@@ -1020,7 +1020,7 @@
     </div>
 
     <!-- Subscribe button -->
-    <button onclick="window.location.href='subscribe.html'" style="width:100%;padding:14px 20px;background:linear-gradient(135deg,#f0b429,#8b7cf8);border:none;border-radius:12px;color:white;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(240,180,41,0.35);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(240,180,41,0.5)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 20px rgba(240,180,41,0.35)'">
+    <button onclick="window.location.href='subscribe.html'" class="btn-primary-cta">
       💳 Subscribe Now
     </button>
 
@@ -1028,7 +1028,7 @@
       After paying, message us your Gmail &amp; payment screenshot.<br>
       <strong style="color:rgba(52,211,153,0.6);">✓ You'll be logged in automatically once approved.</strong>
     </div>
-    <button onclick="handleLogout()" style="width:100%;padding:11px 20px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+    <button onclick="handleLogout()" class="btn-ghost-dim">
       Sign out &amp; try a different account
     </button>
   </div>
@@ -1067,8 +1067,8 @@
     </div>
     <!-- Nav buttons -->
     <div style="display:flex;gap:10px;margin-top:24px;" id="obt-nav">
-      <button id="obt-skip" onclick="dismissOnboardingTour()" style="flex:1;padding:11px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:rgba(255,255,255,0.35);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">Skip</button>
-      <button id="obt-next" onclick="onboardingNext()" style="flex:2;padding:11px;background:linear-gradient(135deg,#f0b429,#a855f7);border:none;border-radius:12px;color:white;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;box-shadow:0 4px 16px rgba(240,180,41,0.35);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">Next →</button>
+      <button id="obt-skip" onclick="dismissOnboardingTour()" class="btn-obt-skip">Skip</button>
+      <button id="obt-next" onclick="onboardingNext()" class="btn-obt-next">Next →</button>
     </div>
   </div>
 </div>
@@ -1095,7 +1095,7 @@
       <div class="sf-step-pill" data-step="5">5 Study</div>
     </div>
     <div class="sf-nav-step-mobile" id="sf-step-mobile-label">Step 1 of 5</div>
-    <button onclick="sfDismiss()" style="background:none;border:none;color:rgba(232,234,240,.3);font-size:12px;cursor:pointer;padding:6px 10px;border-radius:7px;font-family:inherit;white-space:nowrap;" onmouseover="this.style.color='#e8eaf0'" onmouseout="this.style.color='rgba(232,234,240,.3)'">Skip ✕</button>
+    <button onclick="sfDismiss()" class="btn-sf-skip">Skip ✕</button>
   </div>
 
   <!-- ─── STEP 1: SETUP ─── -->
@@ -1170,13 +1170,13 @@
     </div>
 
     <div style="background:rgba(13,14,26,1);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px 20px;margin-bottom:16px;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(232,234,240,.28);margin-bottom:10px;">Topics found</div>
+      <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:10px;">Topics found</div>
       <div class="sf-topic-chips" id="sf-topic-chips"></div>
     </div>
 
     <div style="background:rgba(240,180,41,0.07);border:1px solid rgba(240,180,41,0.22);border-radius:12px;padding:20px 22px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;display:none;" id="sf-s2-cta">
       <div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#f0b429;margin-bottom:4px;">⚡ Everything's ready</div>
+        <div class="section-label" style="color:#f0b429;margin-bottom:4px;">⚡ Everything's ready</div>
         <div style="font-size:16px;font-weight:800;color:#e8eaf0;margin-bottom:3px;">Take the Diagnostic Quiz</div>
         <div style="font-size:12px;color:rgba(232,234,240,.45);">10 questions · ~5 min · Finds your weak spots</div>
       </div>
@@ -1211,7 +1211,7 @@
     <div class="sf-eyebrow">Step 4 of 5 — Diagnostic Complete</div>
 
     <div class="sf-result-hero">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(232,234,240,.28);margin-bottom:10px;">Your Baseline Score</div>
+      <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:10px;">Your Baseline Score</div>
       <div class="sf-score-big" id="sf-score-display" style="color:#f59e0b;">—</div>
       <div style="font-size:13px;color:rgba(232,234,240,.45);margin-top:6px;" id="sf-score-sub">—</div>
       <div class="sf-result-msg" id="sf-result-msg">—</div>
@@ -1219,25 +1219,25 @@
 
     <div class="sf-2col" style="margin-bottom:16px;">
       <div style="background:rgba(13,14,26,1);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#10b981;margin-bottom:10px;">✅ You know this</div>
+        <div class="section-label" style="color:#10b981;margin-bottom:10px;">✅ You know this</div>
         <div id="sf-strong-topics"><div style="font-size:12px;color:rgba(232,234,240,.35);">—</div></div>
       </div>
       <div style="background:rgba(13,14,26,1);border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:16px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#ef4444;margin-bottom:10px;">⚠️ Needs work</div>
+        <div class="section-label" style="color:#ef4444;margin-bottom:10px;">⚠️ Needs work</div>
         <div id="sf-weak-topics"><div style="font-size:12px;color:rgba(232,234,240,.35);">—</div></div>
       </div>
     </div>
 
     <div class="sf-next-banner">
       <div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#fcd34d;margin-bottom:4px;">📌 Your First Task</div>
+        <div class="section-label" style="color:#fcd34d;margin-bottom:4px;">📌 Your First Task</div>
         <div style="font-size:17px;font-weight:800;color:#e8eaf0;margin-bottom:3px;" id="sf-first-task">—</div>
         <div style="font-size:12px;color:rgba(232,234,240,.45);" id="sf-first-task-sub">—</div>
       </div>
       <button class="sf-btn-primary" onclick="sfGoStudyDashboard()">Start Studying →</button>
     </div>
     <div style="text-align:center;margin-top:12px;">
-      <button onclick="sfGoStep3()" style="background:none;border:none;color:rgba(232,234,240,.3);font-size:12px;cursor:pointer;font-family:inherit;padding:6px;" onmouseover="this.style.color='#fcd34d'" onmouseout="this.style.color='rgba(232,234,240,.3)'">↺ Retake diagnostic quiz</button>
+      <button onclick="sfGoStep3()" class="btn-sf-retake">↺ Retake diagnostic quiz</button>
     </div>
   </div>
 
@@ -1270,7 +1270,7 @@
         <div class="sftr-exam" id="sftr-exam-name"></div>
         <div class="sftr-bar"><div class="sftr-fill" id="sftr-fill" style="width:0%"></div></div>
         <div class="sftr-label" id="sftr-pct">0%</div>
-        <button onclick="sfBackToDashboard()" style="padding:4px 10px;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.25);border-radius:7px;font-size:11px;font-weight:700;color:#fcd34d;cursor:pointer;font-family:inherit;" onmouseover="this.style.background='rgba(240,180,41,.2)'" onmouseout="this.style.background='rgba(240,180,41,.12)'">Study Plan ↑</button>
+        <button onclick="sfBackToDashboard()" class="btn-amber-chip">Study Plan ↑</button>
       </div>
       <!-- Original buttons removed for cleaner interface -->
     </div>
@@ -1282,7 +1282,7 @@
 
       <!-- Hero -->
       <div class="sfd-hero">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#fcd34d;margin-bottom:4px;">📌 Today's Study Session</div>
+        <div class="section-label" style="color:#fcd34d;margin-bottom:4px;">📌 Today's Study Session</div>
         <div style="font-size:22px;font-weight:800;color:#e8eaf0;margin-bottom:6px;" id="sfd-title">—</div>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
           <div style="font-size:13px;color:rgba(232,234,240,.45);">Exam in <strong style="color:#f59e0b;" id="sfd-days">—</strong> days</div>
@@ -1296,12 +1296,12 @@
         </div>
 
         <!-- Today's tasks -->
-        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(232,234,240,.28);margin-bottom:8px;">Today's tasks</div>
+        <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:8px;">Today's tasks</div>
         <div id="sfd-tasks"></div>
       </div>
 
       <!-- Tools grid -->
-      <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(232,234,240,.28);margin-bottom:10px;">Your study tools</div>
+      <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:10px;">Your study tools</div>
       <div class="sfd-tools">
 
         <div class="sfd-tool" onclick="sfToolTutor()">
@@ -1350,7 +1350,7 @@
 
       <!-- Switch exam / setup new -->
       <div style="text-align:center;margin-top:24px;">
-        <button onclick="sfStartNew()" style="background:none;border:none;color:rgba(232,234,240,.25);font-size:12px;cursor:pointer;font-family:inherit;" onmouseover="this.style.color='rgba(232,234,240,.5)'" onmouseout="this.style.color='rgba(232,234,240,.25)'">+ Set up a different exam</button>
+        <button onclick="sfStartNew()" class="btn-sf-new">+ Set up a different exam</button>
       </div>
 
     </div>
@@ -2341,19 +2341,19 @@
             <p id="welcome-msg-text">Select a textbook from the library and ask questions — or just start chatting as a general AI assistant.</p>
             <div id="welcome-quick-prompts" style="margin-top:14px;display:flex;flex-direction:column;gap:6px;">
               <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.28);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:3px;">Try asking…</div>
-              <button onclick="setInputAndSend('Explain the difference between covalent and ionic bonds')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:rgba(255,255,255,0.55);font-size:13px;padding:9px 14px;text-align:left;cursor:pointer;transition:all 0.15s;font-family:inherit;display:flex;align-items:center;gap:9px;" onmouseover="this.style.borderColor='rgba(240,180,41,0.35)';this.style.color='white';this.style.background='rgba(240,180,41,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.55)';this.style.background='rgba(255,255,255,0.03)'">
+              <button onclick="setInputAndSend('Explain the difference between covalent and ionic bonds')" class="btn-suggestion">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(129,140,248,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
                 Explain ionic vs. covalent bonds
               </button>
-              <button onclick="setInputAndSend('Summarize the key concepts from this chapter')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:rgba(255,255,255,0.55);font-size:13px;padding:9px 14px;text-align:left;cursor:pointer;transition:all 0.15s;font-family:inherit;display:flex;align-items:center;gap:9px;" onmouseover="this.style.borderColor='rgba(240,180,41,0.35)';this.style.color='white';this.style.background='rgba(240,180,41,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.55)';this.style.background='rgba(255,255,255,0.03)'">
+              <button onclick="setInputAndSend('Summarize the key concepts from this chapter')" class="btn-suggestion">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(129,140,248,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                 Summarize key concepts from this chapter
               </button>
-              <button onclick="triggerFlashcards ? triggerFlashcards() : setInputAndSend('Create flashcards for me')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:rgba(255,255,255,0.55);font-size:13px;padding:9px 14px;text-align:left;cursor:pointer;transition:all 0.15s;font-family:inherit;display:flex;align-items:center;gap:9px;" onmouseover="this.style.borderColor='rgba(240,180,41,0.35)';this.style.color='white';this.style.background='rgba(240,180,41,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.55)';this.style.background='rgba(255,255,255,0.03)'">
+              <button onclick="triggerFlashcards ? triggerFlashcards() : setInputAndSend('Create flashcards for me')" class="btn-suggestion">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(129,140,248,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
                 Generate flashcards for a topic
               </button>
-              <button onclick="setInputAndSend('Quiz me on the material I just read')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:rgba(255,255,255,0.55);font-size:13px;padding:9px 14px;text-align:left;cursor:pointer;transition:all 0.15s;font-family:inherit;display:flex;align-items:center;gap:9px;" onmouseover="this.style.borderColor='rgba(240,180,41,0.35)';this.style.color='white';this.style.background='rgba(240,180,41,0.06)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.55)';this.style.background='rgba(255,255,255,0.03)'">
+              <button onclick="setInputAndSend('Quiz me on the material I just read')" class="btn-suggestion">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(129,140,248,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 Quiz me on what I just read
               </button>
@@ -3214,7 +3214,7 @@ function handleExamAnswer(btn) {
       if (wrongQs.length > 0) {
         weakAreaHtml = `
           <div style="margin-top:12px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:10px;padding:12px 14px;text-align:left;">
-            <div style="font-size:11px;font-weight:700;color:#f87171;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">⚠️ Topics to review (${wrongQs.length} wrong)</div>
+            <div class="section-label" style="color:#f87171;margin-bottom:8px;">⚠️ Topics to review (${wrongQs.length} wrong)</div>
             ${wrongQs.slice(0,3).map(q => `<div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:5px;padding-left:8px;border-left:2px solid rgba(248,113,113,0.4);">• ${q}…</div>`).join('')}
             <button onclick="setInputAndSend('Help me review the topics I got wrong: ${wrongQs.slice(0,2).join('; ').replace(/'/g, '')}')" style="margin-top:8px;background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.25);color:#f87171;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">Review these topics →</button>
           </div>`;
@@ -5135,8 +5135,8 @@ function _unlockBodyScroll() {
       </div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:22px;">
-      <button onclick="closeDCM(false)" style="height:36px;padding:0 18px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-family:'Inter','DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Cancel</button>
-      <button onclick="closeDCM(true)" style="height:36px;padding:0 18px;border-radius:9px;border:none;background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;font-family:'Inter','DM Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(244,63,94,0.3);transition:opacity 0.15s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">Delete</button>
+      <button onclick="closeDCM(false)" class="btn-modal-cancel">Cancel</button>
+      <button onclick="closeDCM(true)" class="btn-modal-delete">Delete</button>
     </div>
   </div>
 </div>
@@ -5174,7 +5174,7 @@ function _unlockBodyScroll() {
         <div style="font-size:16px;font-weight:700;color:white;line-height:1.2;">Generate Flashcards</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">What topic should the deck cover?</div>
       </div>
-      <button onclick="closeFlashcardModal()" style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;padding:4px;border-radius:6px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
+      <button onclick="closeFlashcardModal()" class="btn-icon-close">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -5198,7 +5198,7 @@ function _unlockBodyScroll() {
     </div>
     <!-- Actions -->
     <div style="display:flex;gap:10px;">
-      <button onclick="closeFlashcardModal()" style="flex:1;padding:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Cancel</button>
+      <button onclick="closeFlashcardModal()" class="btn-fc-cancel">Cancel</button>
       <button onclick="confirmFlashcardTopic()" style="flex:2;padding:11px;background:linear-gradient(135deg,#f0b429,#8b7cf8);border:none;border-radius:10px;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(240,180,41,0.3);display:flex;align-items:center;justify-content:center;gap:7px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         Generate Flashcards
