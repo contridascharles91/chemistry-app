@@ -132,7 +132,7 @@ except ImportError:
         'harris':   {'name': 'Quantitative Chemical Analysis', 'author': 'Daniel C. Harris',        'chunks_url': f'{R2_BUCKET_URL}/data/harris_chunks_with_embeddings.json'},
         'berg':     {'name': 'Biochemistry',                   'author': 'Berg, Tymoczko & Stryer', 'chunks_url': f'{R2_BUCKET_URL}/data/berg_chunks_with_embeddings.json'},
         'netter':   {'name': 'Atlas of Human Anatomy',         'author': 'Frank H. Netter',         'chunks_url': f'{R2_BUCKET_URL}/data/atlas_chunks_with_embeddings.json'},
-        'anaphy2e': {'name': 'Anatomy & Physiology',           'author': 'Patton & Thibodeau',      'chunks_url': f'{R2_BUCKET_URL}/anaphy2e_chunks_with_embeddings.json'},
+        'anaphy2e': {'name': 'Anatomy & Physiology',           'author': 'Patton & Thibodeau',      'chunks_url': f'{R2_BUCKET_URL}/data/anaphy2e_chunks_with_embeddings.json'},
     }
 
 # ── In-memory caches ──────────────────────────────────────────────────────────
@@ -328,6 +328,11 @@ def build_index():
 
     if stage not in (None, '', 'not_built', 'error'):
         return jsonify({'success': True, 'message': 'Build in progress', 'status': current})
+
+    # Prune _status entries for books no longer in the library
+    stale_keys = [k for k in list(_status.keys()) if k not in BOOK_LIBRARY]
+    for k in stale_keys:
+        del _status[k]
 
     _status[book_id] = {'stage': 'queued', 'pct': 0}
     t = threading.Thread(target=_build_book, args=(book_id, sample), daemon=True)

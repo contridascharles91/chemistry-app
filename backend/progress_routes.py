@@ -84,9 +84,10 @@ def compute_readiness():
 
     # ── 2. Topic coverage (25%) ────────────────────────────────────────────
     topics_studied = len(progress.get('topics', {}))
-    # Estimate: a typical textbook chapter has ~5 key topics
-    # 10+ unique topics = considered full coverage
-    coverage_score = min(100, (topics_studied / 10) * 100)
+    # Estimate: a typical university textbook has 30+ testable topic areas.
+    # Cap full coverage at 30 unique topics studied to avoid instant 100%.
+    COVERAGE_TARGET = int(os.environ.get('COVERAGE_TARGET', '30'))
+    coverage_score = min(100, (topics_studied / COVERAGE_TARGET) * 100)
 
     # ── 3. Flashcard mastery (20%) ─────────────────────────────────────────
     total_cards   = progress.get('totalCards', 0)
