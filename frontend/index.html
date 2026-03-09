@@ -1359,58 +1359,83 @@
   <!-- ORIGINAL WELCOME CONTENT (hidden when exam is active) -->
   <div id="sf-original-welcome">
 
-    <!-- ══ HERO SECTION — always visible, never scrolled away ══ -->
-    <div class="wc-hero">
+    <!-- ══ HOME CONTENT — matches mockup exactly ══ -->
+    <div class="home-content">
 
-      <!-- Eyebrow badge -->
-      <div class="welcome-eyebrow">
-        <span class="welcome-eyebrow-dot"></span>
-        AI Study Assistant
-      </div>
-
-      <!-- Title -->
-      <div class="wc-hero-title">
-        <h1 class="welcome-title">Study smarter,<br>not <span class="wc-title-accent">harder</span></h1>
-        <p class="welcome-subtitle">Ask questions, explore your textbooks, and generate study tools — all in one place.</p>
-      </div>
-
-      <!-- Streak widget (shows when active) -->
-      <div id="streak-welcome-widget" onclick="sfToolFlashcards && sfToolFlashcards()">
-        <div class="streak-fire">🔥</div>
-        <div>
-          <div class="streak-count" id="streak-count-display">1</div>
+      <!-- Hero -->
+      <div class="home-hero">
+        <div class="home-eyebrow">
+          <span class="home-eyebrow-dot"></span>
+          AI Study Assistant
         </div>
-        <div class="streak-label" id="streak-label-display">
-          day streak
-          <small>Keep it going — study something today!</small>
+        <h1 class="home-title">Study smarter,<br>not <em>harder</em></h1>
+        <p class="home-subtitle">Ask questions, explore your textbooks, and generate study tools — all in one place.</p>
+      </div>
+
+      <!-- Ask Box -->
+      <div class="home-ask-box">
+        <textarea class="home-ask-textarea" placeholder="Ask anything about your textbooks…" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();homeSubmitAsk();}"></textarea>
+        <div class="home-ask-footer">
+          <div class="home-ask-actions">
+            <button class="home-ask-btn home-ask-btn--active" onclick="selectBook && selectBook('atkins')" title="Open selected textbook">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              Atkins Chemistry
+            </button>
+            <button class="home-ask-btn" onclick="uploadPDFFromWelcome && uploadPDFFromWelcome()" title="Upload a PDF">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 16 12 12 8 16"/><line x1="12" x2="12" y1="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Upload PDF
+            </button>
+            <button class="home-ask-btn" onclick="homeSetGeneralMode && homeSetGeneralMode()" title="General AI mode">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+              General AI
+            </button>
+          </div>
+          <button class="home-ask-submit" onclick="homeSubmitAsk()" title="Send">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
         </div>
-        <div class="streak-cta">Continue →</div>
       </div>
 
-      <!-- Dual CTA — MAIN ACTIONS -->
-      <div class="wc-cta-row">
-        <button class="wc-cta-primary" onclick="sfOpenFlow()">
-          <div class="wc-cta-icon" style="background:linear-gradient(135deg,#667eea,#a855f7);">🎯</div>
-          <div class="wc-cta-text">
-            <span class="wc-cta-label">I have an exam coming up</span>
-            <span class="wc-cta-sub">Upload slides → reviewer, flashcards &amp; quiz in 60 sec</span>
+      <!-- Quick Cards -->
+      <div class="home-quick-row">
+        <div class="home-quick-card" onclick="libraryPageOpen && libraryPageOpen()">
+          <div class="home-quick-icon home-quick-icon--yellow">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
           </div>
-          <svg class="wc-cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="wc-cta-secondary" onclick="document.querySelector('.wc-books-section') && document.querySelector('.wc-books-section').scrollIntoView({behavior:'smooth'})">
-          <div class="wc-cta-icon" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);">📖</div>
-          <div class="wc-cta-text">
-            <span class="wc-cta-label">Browse textbooks</span>
-            <span class="wc-cta-sub">Pick a book &amp; start asking questions</span>
+          <div class="home-quick-title">Open Textbook</div>
+          <div class="home-quick-desc">Browse your library and study alongside AI</div>
+        </div>
+        <div class="home-quick-card" onclick="fcPageOpen && fcPageOpen()">
+          <div class="home-quick-icon home-quick-icon--violet">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
           </div>
-          <svg class="wc-cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
+          <div class="home-quick-title">Flashcards</div>
+          <div class="home-quick-desc">Generate and review study cards from any chapter</div>
+        </div>
+        <div class="home-quick-card" onclick="uploadPDFFromWelcome && uploadPDFFromWelcome()">
+          <div class="home-quick-icon home-quick-icon--teal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+          </div>
+          <div class="home-quick-title">Upload PDF</div>
+          <div class="home-quick-desc">Add your own notes or textbooks to chat with</div>
+        </div>
       </div>
 
-    </div><!-- end wc-hero -->
+      <!-- Suggested Prompts -->
+      <div class="home-prompts-label">TRY ASKING</div>
+      <div class="home-prompts-row">
+        <button class="home-prompt-chip" onclick="homeUsePrompt(this)">Explain Le Chatelier's principle</button>
+        <button class="home-prompt-chip" onclick="homeUsePrompt(this)">Summarize Chapter 5 of Atkins</button>
+        <button class="home-prompt-chip" onclick="homeUsePrompt(this)">Generate flashcards on thermodynamics</button>
+        <button class="home-prompt-chip" onclick="homeUsePrompt(this)">What is Gibbs free energy?</button>
+        <button class="home-prompt-chip" onclick="homeUsePrompt(this)">Quiz me on organic reactions</button>
+        <button class="home-prompt-chip" onclick="homeUsePrompt(this)">Compare SN1 vs SN2 mechanisms</button>
+      </div>
 
-    <!-- ══ BOOKS SECTION — scrollable ══ -->
-    <div class="welcome-content wc-books-section">
+    </div><!-- end home-content -->
+
+    <!-- Keep books section hidden but functional for JS that depends on it -->
+    <div class="welcome-content wc-books-section" style="display:none!important;">
 
       <!-- Section label -->
       <div class="wc-section-label">
@@ -1530,6 +1555,35 @@
 
     </div><!-- end wc-books-section -->
   </div><!-- end sf-original-welcome -->
+
+  <!-- Home page helpers -->
+  <script>
+  function homeSubmitAsk() {
+    var ta = document.querySelector('.home-ask-textarea');
+    if (!ta) return;
+    var q = ta.value.trim();
+    if (!q) return;
+    // Route into existing chat system
+    if (typeof startGeneralChat === 'function') { startGeneralChat(q); }
+    else if (typeof sendMessage === 'function') { sendMessage(q); }
+    else {
+      // Fallback: populate the main chat input and submit
+      var inp = document.getElementById('user-input') || document.querySelector('.chat-input textarea');
+      if (inp) { inp.value = q; inp.dispatchEvent(new Event('input')); }
+      var btn = document.getElementById('send-btn') || document.querySelector('.send-btn');
+      if (btn) btn.click();
+    }
+    ta.value = '';
+  }
+  function homeUsePrompt(el) {
+    var ta = document.querySelector('.home-ask-textarea');
+    if (ta) { ta.value = el.textContent; ta.focus(); }
+  }
+  function homeSetGeneralMode() {
+    // Toggle to general AI mode (no book context)
+    if (typeof setGeneralMode === 'function') setGeneralMode();
+  }
+  </script>
 
   <!-- wbp filter script -->
   <script>
