@@ -5099,27 +5099,99 @@ body.light-mode .health-tip-item:hover { background: rgba(0,0,0,0.03); }
   border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
 }
 .settings-toggle-info { display: flex; flex-direction: column; gap: 2px; }
-.settings-toggle-label { font-size: 14px; font-weight: 500; color: white; }
-.settings-toggle-desc { font-size: 12px; color: rgba(255,255,255,0.4); }
+.settings-toggle-label { font-size: 14px; font-weight: 500; color: white; font-family: 'DM Sans', sans-serif; }
+.settings-toggle-desc { font-size: 12px; color: rgba(255,255,255,0.4); font-family: 'DM Sans', sans-serif; }
 .settings-toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
 .settings-toggle input { opacity: 0; width: 0; height: 0; }
 .settings-toggle-slider { position: absolute; inset: 0; background: rgba(255,255,255,0.15); border-radius: 22px; cursor: pointer; transition: 0.2s; }
 .settings-toggle-slider:before { content:''; position:absolute; width:16px; height:16px; left:3px; top:3px; background:white; border-radius:50%; transition:0.2s; }
-.settings-toggle input:checked + .settings-toggle-slider { background: #f0b429; }
+.settings-toggle input:checked + .settings-toggle-slider {
+  background: #f0b429;
+  box-shadow: 0 0 0 3px rgba(240,180,41,0.18);
+}
 .settings-toggle input:checked + .settings-toggle-slider:before { transform: translateX(18px); }
-.settings-select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; color: white; font-size: 14px; outline: none; cursor: pointer; width: 100%; }
+.settings-select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: white;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.settings-select:focus {
+  border-color: rgba(240,180,41,0.45);
+  box-shadow: 0 0 0 3px rgba(240,180,41,0.10);
+}
+.settings-select:hover {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+}
 .settings-select option { background: #13141a; }
-.settings-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.settings-section-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.3);
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace;
+}
 .help-item { border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
-.help-question { width: 100%; background: rgba(255,255,255,0.03); border: none; padding: 14px 16px; color: white; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.15s; }
+.help-question {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: none;
+  padding: 14px 16px;
+  color: rgba(255,255,255,0.88);
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.15s, color 0.15s;
+}
 .help-question:hover { background: rgba(255,255,255,0.06); }
-.help-chevron { font-size: 12px; color: rgba(255,255,255,0.4); transition: transform 0.2s; }
-.help-answer { display: none; padding: 12px 16px 14px; font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.15); }
+.help-chevron { font-size: 12px; color: rgba(255,255,255,0.35); transition: transform 0.2s, color 0.15s; }
+.help-answer {
+  display: none;
+  padding: 14px 16px 16px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.58);
+  line-height: 1.65;
+  border-top: 1px solid rgba(240,180,41,0.08);
+  background: rgba(0,0,0,0.18);
+  font-family: 'DM Sans', sans-serif;
+}
 .help-item.open .help-answer { display: block; }
 .help-item.open .help-chevron { transform: rotate(180deg); }
-.shortcut-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; color: rgba(255,255,255,0.6); }
+.help-item.open .help-question {
+  background: rgba(240,180,41,0.06);
+  color: #f0b429;
+  border-bottom: 1px solid rgba(240,180,41,0.12);
+}
+.shortcut-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; color: rgba(255,255,255,0.6); font-family: 'DM Sans', sans-serif; }
 .shortcut-row:last-child { border-bottom: none; }
-.shortcut-key { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; padding: 3px 8px; font-size: 12px; font-family: monospace; color: rgba(255,255,255,0.8); }
+.shortcut-key {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 5px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace;
+  color: rgba(255,255,255,0.82);
+  letter-spacing: 0.04em;
+}
 
 
 /* ==========================================
@@ -8736,14 +8808,16 @@ body.light-mode .auth-feature-row.locked { color: rgba(255,255,255,0.3) !importa
   top: -11px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   padding: 3px 12px;
   border-radius: 20px;
   background: linear-gradient(135deg, #f0b429, #8b7cf8);
-  color: white;
+  color: #000;
   white-space: nowrap;
+  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace;
+  text-transform: uppercase;
 }
 
 /* Plan highlighted (Pro) */
@@ -8758,15 +8832,16 @@ body.light-mode .auth-feature-row.locked { color: rgba(255,255,255,0.3) !importa
 
 /* Plan top */
 .plan-name {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.10em;
   margin-bottom: 8px;
+  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace;
 }
 .plan-free .plan-name  { color: rgba(255,255,255,0.55); }
 .plan-pro .plan-name   { color: #fcd34d; }
-.plan-ultra .plan-name { color: #f59e0b; }
+.plan-ultra .plan-name { color: #f0b429; }
 
 .plan-price {
   font-size: 30px;
@@ -8823,12 +8898,12 @@ body.light-mode .auth-feature-row.locked { color: rgba(255,255,255,0.3) !importa
   padding: 10px 14px;
   border-radius: 9px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border: none;
   transition: all 0.18s;
-  font-family: inherit;
-  letter-spacing: 0.2px;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.01em;
 }
 .plan-btn-free {
   background: rgba(255,255,255,0.07);
@@ -8849,13 +8924,14 @@ body.light-mode .auth-feature-row.locked { color: rgba(255,255,255,0.3) !importa
   transform: translateY(-1px);
 }
 .plan-btn-ultra {
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
-  color: white;
-  box-shadow: 0 4px 18px rgba(245,158,11,0.3);
+  background: linear-gradient(135deg, #f0b429, #2dd4bf);
+  color: #000;
+  box-shadow: 0 4px 18px rgba(240,180,41,0.28);
 }
 .plan-btn-ultra:hover {
-  box-shadow: 0 6px 24px rgba(245,158,11,0.5);
+  box-shadow: 0 6px 24px rgba(240,180,41,0.45);
   transform: translateY(-1px);
+  filter: brightness(1.06);
 }
 
 .pricing-footer-note {
