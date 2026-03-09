@@ -276,7 +276,7 @@
      ═══════════════════════════════════════════════════════ -->
 <div class="ws2-topbar" id="global-topbar">
   <div class="ws2-topbar-left">
-    <div class="ws2-topbar-logo" onclick="goHome()">
+    <div class="ws2-topbar-logo" onclick="ws2NavHome()">
       <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
         <defs>
           <linearGradient id="tb2Orb1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -290,7 +290,7 @@
       </svg>
     </div>
     <nav class="ws2-topbar-nav">
-      <button class="ws2-topnav-btn" id="topnav-home" onclick="goHome()">
+      <button class="ws2-topnav-btn" id="topnav-home" onclick="ws2NavHome()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         Homepage
       </button>
@@ -298,7 +298,7 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Study Workspace
       </button>
-      <button class="ws2-topnav-btn" id="topnav-flashcards" onclick="window.fcPageOpen&&window.fcPageOpen()">
+      <button class="ws2-topnav-btn" id="topnav-flashcards" onclick="window.fcPageOpen&&window.fcPageOpen();ws2SetActiveTab('flashcards')">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         Flashcards
       </button>
@@ -1553,7 +1553,19 @@
     el.style.height = Math.min(el.scrollHeight, 160) + 'px';
   }
 
-  // ── Active tab management ──────────────────────────────────────
+  // ── ws2NavHome: hide ALL pages then go home ──────────────────
+  function ws2NavHome() {
+    // Hide every SPA page that could be covering the welcome screen
+    ['fc-page','sp-page','library-page','main-container','main-header'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    });
+    // Remove workspace-active body class
+    document.body.classList.remove('workspace-active');
+    ws2SetActiveTab('home');
+    if (typeof goHome === 'function') goHome();
+  }
+  window.ws2NavHome = ws2NavHome;
   function ws2SetActiveTab(tab) {
     // tab: 'home' | 'workspace' | 'flashcards'
     document.querySelectorAll('.ws2-topnav-btn').forEach(function(b) {
@@ -1565,7 +1577,47 @@
   // Expose so app.js / page open functions can call it
   window.ws2SetActiveTab = ws2SetActiveTab;
 
-  // ── Online / Offline indicator ──────────────────────────────────
+  // ── New-user reset: clear all progress/history on fresh install ─
+  (function() {
+    var SENTINEL = 'chunks_initialized_v1';
+    if (!localStorage.getItem(SENTINEL)) {
+      // First ever load — wipe everything so user starts at zero
+      var WIPE_KEYS = [
+        'chunks_chat_history','chunks_chat_history_v2','chunks_chat_sessions',
+        'chunks_progress','chunks_sr_data','chunks_saved_flashcards',
+        'chunks_saved_exams','chunks_saved_materials','chunks_saved_notes',
+        'chunks_study_flow_v2','chunks_ai_memory','chunks_onboarded',
+        'chunks_free_msg_count','chunks_last_chat_id','chunks_active_tab',
+        'chunks_exam_name','chunks_exam_date','chunks_personalization',
+        'chunksProgress_global'
+      ];
+      WIPE_KEYS.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
+      localStorage.setItem(SENTINEL, '1');
+    }
+  })();
+
+  // ── Zoom scrollbar: if window is zoomed in, enable body scroll ──
+  (function() {
+    function checkZoom() {
+      var ratio = window.devicePixelRatio || 1;
+      // On most browsers, zooming increases devicePixelRatio above the screen's native
+      // We use visualViewport if available for a more reliable signal
+      var zoomed = false;
+      if (window.visualViewport) {
+        zoomed = window.visualViewport.scale > 1.05;
+      } else {
+        zoomed = (window.outerWidth / window.innerWidth) > 1.05;
+      }
+      document.documentElement.style.overflowY = zoomed ? 'auto' : '';
+      document.body.style.overflowY = zoomed ? 'auto' : '';
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', checkZoom);
+      window.visualViewport.addEventListener('scroll', checkZoom);
+    }
+    window.addEventListener('resize', checkZoom);
+    document.addEventListener('DOMContentLoaded', checkZoom);
+  })();
   function ws2UpdateOnlineStatus() {
     var ind = document.getElementById('ws2-live-indicator');
     var lbl = ind ? ind.querySelector('.ws2-live-label') : null;
