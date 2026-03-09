@@ -559,7 +559,7 @@ nav{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:cente
 </div>
 
 <script>
-const API = window.__API_URL__ || 'https://chemistry-app-production.up.railway.app';
+const API = window.__API_URL__ || window.API_URL || 'https://chunksai.up.railway.app';
 
 // ── Data helpers ──────────────────────────────────────────────────────────────
 function getProgress()        { try { return JSON.parse(localStorage.getItem('chunks_progress') || '{}'); }        catch(e) { return {}; } }

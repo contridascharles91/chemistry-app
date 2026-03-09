@@ -1158,8 +1158,7 @@
           general_mode: !!window._generalChatMode,
           history: chatHistory,
           user_memory: getAIMemoryString(),
-          web_search: !!window._webSearchEnabled,
-          user_tier: isFreeTier() ? 'free' : 'paid'
+          web_search: !!window._webSearchEnabled
         })
       });
       
@@ -8652,7 +8651,14 @@ async function handleLogout() {
 function isFreeTier() {
   if (isGuestMode) return true;
   const u = JSON.parse(localStorage.getItem('chunks_user') || '{}');
-  return u.tier === 'free';
+  // If we have a user record, check their tier explicitly.
+  // Only default to 'free' when tier is explicitly 'free' (not when it's absent
+  // because the profile hasn't loaded yet — in that ambiguous state, allow access
+  // so paid users don't see a flash of free-tier restrictions on page load).
+  if (u && u.tier) return u.tier === 'free';
+  // No tier info yet — if we have a user id, assume paid (avoids false lock-out).
+  if (u && u.id) return false;
+  return true;
 }
 
 // Free tier: 20 AI messages per day (tracked in localStorage)
