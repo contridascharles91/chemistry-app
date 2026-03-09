@@ -197,8 +197,9 @@
         // Hide welcome screen and show main interface
         createNewChat();
         document.getElementById('welcome-screen').classList.add('hidden');
-        document.getElementById('main-header').style.display = 'flex';
+        document.getElementById('main-header').style.display = 'none';
         document.getElementById('main-container').style.display = 'flex';
+        enterWorkspace();
         // Exit general AI / fullscreen mode now that a book is loaded
         document.getElementById('main-container').classList.remove('chat-fullscreen');
         window._generalChatMode = false; try { sessionStorage.setItem('chunks_general_mode', '0'); } catch(e) {}
@@ -287,6 +288,17 @@
       if (chatInput) {
         const shortName = bookName.length > 30 ? bookName.substring(0, 27) + '…' : bookName;
         chatInput.placeholder = `Ask about ${shortName}…`;
+      }
+      // Update workspace toolbar book title
+      const wsBookName = document.getElementById('ws-book-name');
+      if (wsBookName) wsBookName.textContent = bookName;
+      // Update chat header context tag
+      const ctxTag   = document.getElementById('chat-context-tag');
+      const ctxLabel = document.getElementById('chat-context-label');
+      if (ctxTag && ctxLabel) {
+        const short = bookName.length > 18 ? bookName.substring(0, 16) + '…' : bookName;
+        ctxLabel.textContent = short;
+        ctxTag.style.display = 'flex';
       }
       // #17: Update mobile book toggle label to show book is loaded
       const mobileLabel = document.getElementById('mobileBookToggleLabel');
@@ -381,7 +393,9 @@
   }
 
   function toggleSidebar() {
-    document.getElementById('pdf-sidebar').classList.toggle('open');
+    const sidebar = document.getElementById('pdf-sidebar');
+    if (!sidebar) return;
+    sidebar.classList.toggle('ws-outline-collapsed');
   }
 
   function switchSidebarTab(tab) {
@@ -448,6 +462,15 @@
           itemDiv.className = `outline-item level-${level}`;
           itemDiv.onclick = () => {
             jumpToPage(pageNumber);
+            // Update toolbar chapter subtitle
+            const chapterEl = document.getElementById('ws-book-chapter');
+            if (chapterEl) chapterEl.textContent = item.title;
+            // Update chat header title
+            const chatTitle = document.getElementById('chat-header-title');
+            if (chatTitle) chatTitle.textContent = item.title;
+            // Mark active outline item
+            document.querySelectorAll('.outline-item').forEach(el => el.classList.remove('active'));
+            itemDiv.classList.add('active');
             if (window.innerWidth < 768) toggleSidebar();
           };
           itemDiv.innerHTML = `<div class="outline-title">${escapeHtml(item.title)}</div><div class="outline-page">${pageNumber}</div>`;
@@ -2805,26 +2828,38 @@
       const pagesToShow = (allSources && allSources.length > 0) ? allSources :
                           (source && source.page ? [source] : []);
       if (pagesToShow.length > 0 && typeof pdfDoc !== 'undefined' && pdfDoc) {
-        const refBar = document.createElement('div');
-        refBar.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding:10px 12px;background:rgba(102,126,234,0.06);border:1px solid rgba(102,126,234,0.15);border-radius:10px;align-items:center;';
-        const lbl = document.createElement('span');
-        lbl.style.cssText = 'font-size:11px;color:rgba(255,255,255,0.4);font-weight:600;margin-right:4px;flex-shrink:0;';
-        lbl.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px;opacity:0.6"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>From your book:';
-        refBar.appendChild(lbl);
+        const sourcesSection = document.createElement('div');
+        sourcesSection.className = 'sources-section';
+        const sourcesLabel = document.createElement('div');
+        sourcesLabel.className = 'sources-label';
+        sourcesLabel.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> Sources`;
+        sourcesSection.appendChild(sourcesLabel);
+        const sourcesGrid = document.createElement('div');
+        sourcesGrid.className = 'sources-grid';
         pagesToShow.forEach(src => {
           const pn = parseInt(src.page);
-          const badge = document.createElement('button');
-          badge.style.cssText = 'cursor:pointer;background:rgba(129,140,248,0.15);border:1px solid rgba(129,140,248,0.35);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#a5b4fc;white-space:nowrap;transition:all 0.15s;font-family:inherit;display:flex;align-items:center;gap:4px;';
-          badge.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg> See page ${pn} →`;
-          badge.title = `Jump to page ${pn} in the textbook`;
-          badge.onmouseenter = () => { badge.style.background = 'rgba(129,140,248,0.3)'; badge.style.borderColor = 'rgba(129,140,248,0.6)'; };
-          badge.onmouseleave = () => { badge.style.background = 'rgba(129,140,248,0.15)'; badge.style.borderColor = 'rgba(129,140,248,0.35)'; };
-          badge.onclick = () => jumpToPage(pn);
-          refBar.appendChild(badge);
+          const bookName = (source && source.textbook) ? source.textbook : (currentPdfName || 'Textbook');
+          const sectionName = (source && source.chapter && source.chapter !== 'N/A') ? source.chapter : '';
+          const card = document.createElement('div');
+          card.className = 'source-card';
+          card.title = `Jump to page ${pn}`;
+          card.onclick = () => jumpToPage(pn);
+          card.innerHTML = `
+            <div class="source-icon-book">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            </div>
+            <div class="source-info">
+              <div class="source-title">${bookName.length > 28 ? bookName.substring(0,26)+'…' : bookName}</div>
+              ${sectionName ? `<div class="source-meta">${sectionName}</div>` : ''}
+            </div>
+            <div class="source-page">p. ${pn}</div>
+          `;
+          sourcesGrid.appendChild(card);
         });
-        bubble.appendChild(refBar);
+        sourcesSection.appendChild(sourcesGrid);
+        bubble.appendChild(sourcesSection);
       }
-      if (source && (source.textbook || source.chapter) && source.chapter !== 'N/A') {
+      if (source && (source.textbook || source.chapter) && source.chapter !== 'N/A' && !(pagesToShow.length > 0 && typeof pdfDoc !== 'undefined' && pdfDoc)) {
         const footer = document.createElement('div');
         footer.className = 'source-footer';
         footer.innerHTML = `<svg class="icon" width="18" height="18"><use href="#icon-books"/></svg> ${source.textbook || 'Textbook'} • ${source.chapter || 'Chapter N/A'}`;
@@ -3091,6 +3126,51 @@
 
       div.appendChild(bubble);
       div.appendChild(actions);
+
+      // ── Follow-up question chips ────────────────────────────────────
+      const isRealMsg = text.length > 100 && !text.startsWith('🔒') && !text.startsWith('✅') && !text.startsWith('⚠️');
+      if (isRealMsg) {
+        const followupSection = document.createElement('div');
+        followupSection.className = 'followup-section';
+        const followupLabel = document.createElement('div');
+        followupLabel.className = 'followup-label';
+        followupLabel.textContent = 'Follow-up questions';
+        const followupChips = document.createElement('div');
+        followupChips.className = 'followup-chips';
+        // Generate 2 contextual follow-up chips based on the question asked
+        const lastUserMsg = (() => {
+          let prev = div.previousElementSibling;
+          while (prev) {
+            if (prev.classList.contains('message') && prev.classList.contains('user')) {
+              return prev.querySelector('.message-bubble')?.textContent?.trim() || '';
+            }
+            prev = prev.previousElementSibling;
+          }
+          return '';
+        })();
+        const genericFollowups = [
+          'Can you give me a real-world example?',
+          'What are the most common exam questions on this?',
+          'Summarize this as 3 key bullet points',
+          'How does this connect to what came before?',
+          'Create a practice problem for me'
+        ];
+        // Pick 2 that aren't too similar to the current question
+        const chips = genericFollowups.filter(q => !lastUserMsg.toLowerCase().includes(q.split(' ')[2] || '')).slice(0, 2);
+        chips.forEach(q => {
+          const chip = document.createElement('div');
+          chip.className = 'followup-chip';
+          chip.innerHTML = `${q} <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>`;
+          chip.onclick = () => {
+            const input = document.getElementById('chat-input');
+            if (input) { input.value = q; input.focus(); }
+          };
+          followupChips.appendChild(chip);
+        });
+        followupSection.appendChild(followupLabel);
+        followupSection.appendChild(followupChips);
+        div.appendChild(followupSection);
+      }
     }
 
     chat.insertBefore(div, typing);
@@ -3670,13 +3750,14 @@
           } else if (generalMode) {
             document.getElementById('welcome-screen').classList.add('hidden');
             const mh = document.getElementById('main-header');
-            if (mh) { mh.classList.add('active'); mh.style.display = 'flex'; }
+            if (mh) { mh.classList.add('active'); mh.style.display = 'none'; }
             const mc = document.getElementById('main-container');
             if (mc) { mc.classList.add('active'); mc.style.display = 'flex'; mc.classList.add('chat-fullscreen'); }
             window._generalChatMode = true; try { sessionStorage.setItem('chunks_general_mode', '1'); } catch(e) {}
             var noFlash = document.getElementById('__no-flash');
             if (noFlash) noFlash.remove();
             if (typeof createNewChat === 'function') createNewChat();
+            if (typeof enterWorkspace === 'function') enterWorkspace();
           } else {
             // Session not in localStorage yet — try once more after Supabase sync
             setTimeout(() => {
@@ -3695,6 +3776,30 @@
             }, 800);
           }
         }, 600);
+      }
+    } catch(e) {}
+
+    // ── HASH ROUTING: Restore workspace view on page refresh ──────────
+    try {
+      if (window.location.hash === '#workspace') {
+        const lastChatId  = sessionStorage.getItem('chunks_last_chat_id');
+        const generalMode = sessionStorage.getItem('chunks_general_mode') === '1';
+        if (!lastChatId && !generalMode) {
+          setTimeout(() => {
+            const ws = document.getElementById('welcome-screen');
+            const mh = document.getElementById('main-header');
+            const mc = document.getElementById('main-container');
+            const noFlash = document.getElementById('__no-flash');
+            if (ws) ws.classList.add('hidden');
+            if (mh) mh.style.display = 'none';
+            if (mc) { mc.style.display = 'flex'; mc.classList.add('chat-fullscreen'); }
+            if (noFlash) noFlash.remove();
+            window._generalChatMode = true;
+            try { sessionStorage.setItem('chunks_general_mode', '1'); } catch(e2) {}
+            if (typeof createNewChat === 'function') createNewChat();
+            if (typeof enterWorkspace === 'function') enterWorkspace();
+          }, 300);
+        }
       }
     } catch(e) {}
   });
@@ -3839,9 +3944,10 @@
       welcomeScreen.classList.add('hidden');
     }
     mainHeader.classList.add('active');
-    mainHeader.style.display = 'flex';
+    mainHeader.style.display = 'none';
     mainContainer.classList.add('active');
     mainContainer.style.display = 'flex';
+    enterWorkspace();
 
     const chat = document.getElementById('chat-messages');
     const typing = document.getElementById('typing-indicator');
@@ -6972,14 +7078,30 @@ function filterChatHistory() {
   });
 }
 
+// ── Workspace routing helpers ────────────────────────────────────
+// All workspace-mode CSS is scoped to body.workspace-active.
+// Call enterWorkspace() when opening a book/chat, leaveWorkspace()
+// when navigating to Home / Library / Flashcards / Study Plan.
+
+function enterWorkspace() {
+  document.body.classList.add('workspace-active');
+  try { history.replaceState(null, '', '#workspace'); } catch(e) {}
+}
+
+function leaveWorkspace() {
+  document.body.classList.remove('workspace-active');
+  document.getElementById('main-container').style.display = 'none';
+  document.getElementById('main-header').style.display = 'none';
+  try { history.replaceState(null, '', window.location.pathname); } catch(e) {}
+}
+
 function goHome() {
   // Save current chat before leaving so it appears in sidebar
   if (typeof saveCurrentChat === 'function') saveCurrentChat();
   if (typeof displayChatHistory === 'function') displayChatHistory();
 
   // If the user has a study plan, sf-original-welcome (the book picker) will be
-  // replaced by sfRenderDashboard after ~50ms.  Hide it BEFORE showing the
-  // welcome-screen so the book picker never flickers into view.
+  // replaced by sfRenderDashboard after ~50ms.
   try {
     var _sfst = JSON.parse(localStorage.getItem('chunks_study_flow_v2') || 'null');
     if (_sfst && _sfst.examName) {
@@ -6988,23 +7110,14 @@ function goHome() {
     }
   } catch(e) {}
 
-  // FIX dark flash: hide main content and show welcome in the SAME synchronous
-  // paint. No fade-in — instant swap. The dark flash was caused by a frame gap
-  // during the opacity 0→1 transition while both main and welcome were invisible.
-  document.getElementById('main-header').style.display = 'none';
-  document.getElementById('main-container').style.display = 'none';
+  // Leave workspace mode first — removes body.workspace-active + hides main-container
+  leaveWorkspace();
 
   const ws = document.getElementById('welcome-screen');
   ws.classList.remove('fading-out');
   ws.classList.remove('ws-entering');
-  ws.classList.remove('hidden');  // ← show instantly, same paint as hiding main
-  // FIX: user navigated away — don't restore this chat on refresh
+  ws.classList.remove('hidden');
   try { sessionStorage.removeItem('chunks_last_chat_id'); } catch(e) {}
-  // Close sidebar after navigating
-  const sidebar = document.getElementById('chat-history-sidebar');
-  sidebar.classList.remove('open');
-  sidebar.classList.remove('hover-open');
-  // Re-render study dashboard (welcome-screen is now visible so sfRenderDashboard won't bail early)
   if (typeof sfRenderDashboard === 'function') {
     setTimeout(sfRenderDashboard, 50);
   }
@@ -7379,6 +7492,17 @@ function closeBook() {
   if (pageTotal) pageTotal.textContent = '-';
   const pageInput = document.getElementById('page-input');
   if (pageInput) { pageInput.value = 1; }
+  // Reset toolbar book title
+  const wsBookName = document.getElementById('ws-book-name');
+  if (wsBookName) wsBookName.textContent = 'No book loaded';
+  // Reset book chapter subtitle
+  const wsBookChapter = document.getElementById('ws-book-chapter');
+  if (wsBookChapter) wsBookChapter.textContent = '';
+  // Reset chat header
+  const ctxTag = document.getElementById('chat-context-tag');
+  if (ctxTag) ctxTag.style.display = 'none';
+  const chatHeaderTitle = document.getElementById('chat-header-title');
+  if (chatHeaderTitle) chatHeaderTitle.textContent = 'AI Study Assistant';
 
   if (typeof createNewChat === 'function') createNewChat();
   if (typeof showToast === 'function') showToast('📖 Book closed — General AI mode');
@@ -7395,9 +7519,10 @@ function enterChatFromWelcome(prefill) {
   }
   createNewChat();
   document.getElementById('welcome-screen').classList.add('hidden');
-  document.getElementById('main-header').style.display = 'flex';
+  document.getElementById('main-header').style.display = 'none';
   const mainContainer = document.getElementById('main-container');
   mainContainer.style.display = 'flex';
+  enterWorkspace(); // add body.workspace-active + set hash
 
   // No book loaded → fullscreen general AI mode
   const hasBook = !!(localStorage.getItem('eightysix_current_book') && typeof pdfDoc !== 'undefined' && pdfDoc);
@@ -7424,9 +7549,10 @@ function sendWelcomeChat() {
   if (!text) return;
   createNewChat();
   document.getElementById('welcome-screen').classList.add('hidden');
-  document.getElementById('main-header').style.display = 'flex';
+  document.getElementById('main-header').style.display = 'none';
   const mainContainer = document.getElementById('main-container');
   mainContainer.style.display = 'flex';
+  enterWorkspace();
 
   const hasBook = !!(localStorage.getItem('eightysix_current_book') && typeof pdfDoc !== 'undefined' && pdfDoc);
   if (!hasBook) {
@@ -8475,6 +8601,9 @@ function setProfileDisplay(name, initial, plan, avatarBg) {
   if (nameEl) nameEl.textContent = name;
   if (avatarEl) { avatarEl.textContent = initial; if (avatarBg) avatarEl.style.background = avatarBg; }
   if (planEl) planEl.textContent = plan;
+  // Sync compact sidebar avatar
+  const csAvatar = document.getElementById('ws-cs-avatar-initials');
+  if (csAvatar) { csAvatar.textContent = initial; if (avatarBg) csAvatar.style.background = avatarBg; }
 }
 
 function updateProfileFromUser(user) {
@@ -9162,3 +9291,993 @@ function _showUpgradeNudge() {
   // Also try immediately in case already visible
   setTimeout(renderStreakWidget, 1200);
 })();
+
+/* ══════════════════════════════════════════════
+   FLASHCARD PAGE — Dedicated UI  (3-D flip)
+   Reuses existing localStorage data & openFlashcardModal.
+   ══════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  /* ── State ─────────────────────────────── */
+  var _cards    = [];
+  var _topic    = '';
+  var _index    = 0;
+  var _flipped  = false;
+  var _rated    = false;   // whether user already rated this card
+  var _stats    = { easy: 0, gotit: 0, hard: 0, skipped: 0 };
+
+  /* ── Tiny helpers ───────────────────────── */
+  function $id(id) { return document.getElementById(id); }
+
+  function _loadLatest() {
+    try {
+      var sets = JSON.parse(localStorage.getItem('chunks_saved_flashcards') || '[]');
+      return sets.length ? sets[0] : null;
+    } catch (e) { return null; }
+  }
+
+  /* ── Card-wrap height fix ───────────────────
+     Because the faces are position:absolute we
+     need the wrap to explicitly match their height. */
+  function _syncWrapHeight() {
+    var inner = $id('fc-card-inner');
+    if (!inner) return;
+    // measure taller face
+    var front = inner.querySelector('.fc-front');
+    var back  = inner.querySelector('.fc-back');
+    if (!front || !back) return;
+    // temporarily un-flip to measure both
+    var wasFlipped = inner.classList.contains('flipped');
+    inner.style.transition = 'none';
+    inner.classList.remove('flipped');
+    var h = Math.max(front.scrollHeight, back.scrollHeight, 300);
+    inner.style.minHeight = h + 'px';
+    front.style.minHeight = h + 'px';
+    back.style.minHeight  = h + 'px';
+    if (wasFlipped) inner.classList.add('flipped');
+    // restore transition after a tick
+    requestAnimationFrame(function () {
+      inner.style.transition = '';
+    });
+  }
+
+  /* ── Render a card ──────────────────────── */
+  function _render() {
+    if (!_cards.length) { _showEmpty(); return; }
+    if (_index >= _cards.length) { _showComplete(); return; }
+
+    var card = _cards[_index];
+    _flipped = false;
+    _rated   = false;
+
+    /* topbar */
+    var counter = $id('fc-card-counter');
+    if (counter) counter.textContent = 'Card ' + (_index + 1) + ' of ' + _cards.length;
+
+    var pct = _cards.length > 1 ? (_index / (_cards.length - 1)) * 100 : 0;
+    var bar = $id('fc-progress-bar-fill');
+    if (bar) bar.style.width = pct + '%';
+
+    /* tag */
+    var tag = $id('fc-tag-text');
+    if (tag) tag.textContent = ('CONCEPT — ' + (_topic || 'STUDY')).toUpperCase().substring(0, 42);
+
+    /* question */
+    var q = $id('fc-question-text');
+    if (q) q.textContent = card.front || '';
+
+    /* answer */
+    var a = $id('fc-answer-text');
+    if (a) a.textContent = card.back || '';
+
+    /* source (both faces) */
+    var src = card.source || (_topic ? 'Topic: ' + _topic : 'Generated flashcard');
+    var s1 = $id('fc-source-text');
+    var s2 = $id('fc-source-text-back');
+    if (s1) s1.textContent = src;
+    if (s2) s2.textContent = src;
+
+    /* flip card back to front */
+    var inner = $id('fc-card-inner');
+    if (inner) {
+      inner.style.transition = 'none';
+      inner.classList.remove('flipped');
+      requestAnimationFrame(function () { inner.style.transition = ''; });
+    }
+
+    /* hint + reveal btn */
+    var hint = $id('fc-hint');
+    if (hint) hint.textContent = 'Click the card or press Space to reveal the answer';
+
+    var revBtn = $id('fc-reveal-btn');
+    if (revBtn) {
+      revBtn.innerHTML = 'Reveal Answer <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+    }
+
+    /* rate buttons disabled */
+    document.querySelectorAll('.fc-action-btn').forEach(function (b) {
+      b.classList.remove('active');
+    });
+
+    _updateStats();
+
+    /* sync card height after DOM settles */
+    setTimeout(_syncWrapHeight, 30);
+  }
+
+  function _updateStats() {
+    ['easy', 'gotit', 'hard', 'skipped'].forEach(function (k) {
+      var el = $id('fc-stat-' + k);
+      if (el) el.textContent = _stats[k];
+    });
+  }
+
+  /* ── Show / hide overlays ────────────────── */
+  function _showEmpty() {
+    var main = $id('fc-main');
+    if (main) main.style.visibility = 'hidden';
+    var e = $id('fc-empty'), c = $id('fc-complete');
+    if (e) e.classList.remove('hidden');
+    if (c) c.classList.add('hidden');
+  }
+
+  function _showComplete() {
+    var main = $id('fc-main');
+    if (main) main.style.visibility = 'hidden';
+    var c = $id('fc-complete'), e = $id('fc-empty');
+    if (c) {
+      c.classList.remove('hidden');
+      ['easy','gotit','hard','skipped'].forEach(function(k){
+        var el = $id('fcc-'+k); if(el) el.textContent = _stats[k];
+      });
+    }
+    if (e) e.classList.add('hidden');
+  }
+
+  function _resetOverlays() {
+    var main = $id('fc-main');
+    if (main) main.style.visibility = '';
+    var c = $id('fc-complete'), e = $id('fc-empty');
+    if (c) c.classList.add('hidden');
+    if (e) e.classList.add('hidden');
+  }
+
+  /* ── Public API ─────────────────────────── */
+
+  window.fcPageOpen = function (cards, topic) {
+    if (cards && cards.length) {
+      _cards = cards.slice();
+      _topic = topic || '';
+    } else {
+      var latest = _loadLatest();
+      _cards = latest ? latest.cards.slice() : [];
+      _topic = latest ? (latest.topic || '') : '';
+    }
+    _index  = 0;
+    _stats  = { easy: 0, gotit: 0, hard: 0, skipped: 0 };
+    _flipped = false;
+    _rated   = false;
+
+    /* update chapter title & generate topic */
+    var t = $id('fc-chapter-title');
+    if (t) t.textContent = _topic || 'Flashcards';
+    var gt = $id('fc-generate-topic');
+    if (gt) gt.textContent = _topic || 'current topic';
+
+    _resetOverlays();
+    _render();
+
+    /* show page, hide others */
+    var page = $id('fc-page');
+    if (page) page.classList.remove('hidden');
+    var ws = $id('welcome-screen');
+    if (ws) ws.classList.add('hidden');
+    var mc = $id('main-container');
+    if (mc) mc.style.display = 'none';
+    var mh = $id('main-header');
+    if (mh) mh.style.display = 'none';
+    if (typeof leaveWorkspace === 'function') leaveWorkspace();
+  };
+
+  window.fcPageClose = function () {
+    var page = $id('fc-page');
+    if (page) page.classList.add('hidden');
+    if (typeof goHome === 'function') goHome();
+  };
+
+  window.fcReveal = function () {
+    if (_rated) return;   // card already acted on
+
+    var inner = $id('fc-card-inner');
+    if (!inner) return;
+
+    _flipped = !_flipped;
+    inner.classList.toggle('flipped', _flipped);
+
+    var hint   = $id('fc-hint');
+    var revBtn = $id('fc-reveal-btn');
+
+    if (_flipped) {
+      if (hint)   hint.textContent = 'How well did you know this?';
+      if (revBtn) revBtn.innerHTML = 'Skip <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+      /* enable rate buttons */
+      document.querySelectorAll('.fc-action-btn').forEach(function (b) {
+        b.classList.add('active');
+      });
+    } else {
+      if (hint)   hint.textContent = 'Click the card or press Space to reveal the answer';
+      if (revBtn) revBtn.innerHTML = 'Reveal Answer <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+      /* disable rate buttons again if flipped back */
+      document.querySelectorAll('.fc-action-btn').forEach(function (b) {
+        b.classList.remove('active');
+      });
+    }
+  };
+
+  window.fcRate = function (rating) {
+    if (_rated) return;
+    if (!_flipped && rating !== 'skip') {
+      window.fcReveal();
+      return;
+    }
+    _rated = true;
+    if (rating === 'easy')        _stats.easy++;
+    else if (rating === 'gotit')  _stats.gotit++;
+    else if (rating === 'hard')   _stats.hard++;
+    else                          _stats.skipped++;
+
+    _index++;
+    _flipped = false;
+    _rated   = false;
+    _resetOverlays();
+    _render();
+  };
+
+  window.fcRestart = function () {
+    _index   = 0;
+    _stats   = { easy: 0, gotit: 0, hard: 0, skipped: 0 };
+    _flipped = false;
+    _rated   = false;
+    _resetOverlays();
+    _render();
+  };
+
+  window.fcGenerateMore = function () {
+    var topic = _topic || '';
+    window.fcPageClose();
+    setTimeout(function () {
+      if (typeof window.openFlashcardModal === 'function') {
+        window.openFlashcardModal();
+        var input = document.getElementById('flashcard-topic-input');
+        if (input && topic) input.value = topic;
+      }
+    }, 100);
+  };
+
+  window.fcOpenTopicModal = window.fcGenerateMore;
+
+  /* ── Keyboard shortcuts ─────────────────── */
+  document.addEventListener('keydown', function (e) {
+    var page = $id('fc-page');
+    if (!page || page.classList.contains('hidden')) return;
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+
+    if (e.code === 'Space' || e.code === 'ArrowRight') {
+      e.preventDefault();
+      if (!_flipped) window.fcReveal();
+      else window.fcRate('skip');
+    } else if (e.code === 'Digit1') { if (_flipped) window.fcRate('hard'); }
+      else if (e.code === 'Digit2') { if (_flipped) window.fcRate('gotit'); }
+      else if (e.code === 'Digit3') { if (_flipped) window.fcRate('easy'); }
+      else if (e.code === 'Escape') { window.fcPageClose(); }
+  });
+
+  /* ── Patch _replayFlashcardSet ──────────── */
+  document.addEventListener('DOMContentLoaded', function () {
+    var _orig = window._replayFlashcardSet;
+    window._replayFlashcardSet = function (idx) {
+      try {
+        var sets = JSON.parse(localStorage.getItem('chunks_saved_flashcards') || '[]');
+        var set  = sets[idx];
+        if (set) { window.fcPageOpen(set.cards, set.topic); return; }
+      } catch (e) {}
+      if (_orig) _orig(idx);
+    };
+  });
+
+}());
+
+/* ══════════════════════════════════════════════
+   SIDEBAR COLLAPSE + ACTIVE NAV SYSTEM
+   ══════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  var STORAGE_KEY = 'chunks_sidebar_collapsed';
+
+  /* ── Collapse / expand ─────────────────────── */
+
+  function _applyCollapse(collapsed) {
+    var sb = document.getElementById('chat-history-sidebar');
+    if (!sb) return;
+    if (collapsed) {
+      sb.classList.add('collapsed');
+      /* Collapsed strip must always be visible — add open so translateX(0) applies */
+      sb.classList.add('open');
+      sb.classList.remove('hover-open');
+    } else {
+      sb.classList.remove('collapsed');
+      /* When expanding, keep sidebar visible */
+      sb.classList.add('open');
+    }
+    try { localStorage.setItem(STORAGE_KEY, collapsed ? '1' : '0'); } catch (e) {}
+  }
+
+  window.toggleSidebarCollapse = function () {
+    var sb = document.getElementById('chat-history-sidebar');
+    if (!sb) return;
+    var isCollapsed = sb.classList.contains('collapsed');
+    _applyCollapse(!isCollapsed);
+  };
+
+  /* Restore saved state on load */
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === '1') _applyCollapse(true);
+    } catch (e) {}
+    /* Set initial active nav */
+    setActiveNav('home');
+  });
+
+  /* ── Active navigation ─────────────────────── */
+
+  /**
+   * setActiveNav(key)
+   * key: 'home' | 'library' | 'flashcards' | 'studyplan'
+   */
+  window.setActiveNav = function (key) {
+    var items = document.querySelectorAll('.sidebar-item[data-nav]');
+    items.forEach(function (el) {
+      if (el.getAttribute('data-nav') === key) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+    // Sync compact sidebar active state
+    var csBtns = document.querySelectorAll('.ws-cs-btn[data-nav]');
+    csBtns.forEach(function (el) {
+      if (el.getAttribute('data-nav') === key) {
+        el.classList.add('ws-cs-active');
+      } else {
+        el.classList.remove('ws-cs-active');
+      }
+    });
+  };
+
+  /* ── Intercept navigation actions ─────────────
+     Wrap existing handlers so active state tracks
+     without renaming IDs or removing listeners.    */
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    /* goHome patches */
+    var _origGoHome = window.goHome;
+    window.goHome = function () {
+      setActiveNav('home');
+      if (_origGoHome) return _origGoHome.apply(this, arguments);
+    };
+
+    /* createNewChat → home */
+    var _origNewChat = window.createNewChat;
+    window.createNewChat = function () {
+      setActiveNav('home');
+      if (_origNewChat) return _origNewChat.apply(this, arguments);
+    };
+
+    /* Library modal */
+    var _origLib = window.openLibraryModal;
+    window.openLibraryModal = function () {
+      setActiveNav('library');
+      if (_origLib) return _origLib.apply(this, arguments);
+    };
+
+    /* Flashcards page */
+    var _origFcOpen = window.fcPageOpen;
+    window.fcPageOpen = function (cards, topic) {
+      setActiveNav('flashcards');
+      if (_origFcOpen) return _origFcOpen.call(this, cards, topic);
+    };
+
+    /* fcPageClose → back to home */
+    var _origFcClose = window.fcPageClose;
+    window.fcPageClose = function () {
+      setActiveNav('home');
+      if (_origFcClose) return _origFcClose.apply(this, arguments);
+    };
+
+  });
+
+}());
+
+/* ══════════════════════════════════════════════
+   STUDY PLAN PAGE — SPA MODULE
+   ══════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  var SP_API = window.__API_URL__ || 'https://chemistry-app-production.up.railway.app';
+
+  /* ── Data helpers ──────────────────────── */
+  function spGetProgress()        { try { return JSON.parse(localStorage.getItem('chunks_progress') || '{}'); }        catch(e) { return {}; } }
+  function spGetFlashcards()      { try { return JSON.parse(localStorage.getItem('chunks_saved_flashcards') || '[]'); } catch(e) { return []; } }
+  function spGetSRData()          { try { return JSON.parse(localStorage.getItem('chunks_sr_data') || '{}'); }          catch(e) { return {}; } }
+  function spGetExamDate()        { return localStorage.getItem('chunks_exam_date') || ''; }
+  function spGetExamName()        { return localStorage.getItem('chunks_exam_name') || ''; }
+
+  function $sp(id) { return document.getElementById(id); }
+
+  /* ── SR Queue ──────────────────────────── */
+  function spGetSRQueue() {
+    var srData = spGetSRData(), cards = spGetFlashcards(), today = new Date(), queue = [];
+    cards.forEach(function (set) {
+      var setId = (set.topic || 'general').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      (set.cards || []).forEach(function (card) {
+        var key  = setId + '_' + (card.front || '').substring(0, 40);
+        var meta = srData[key] || { interval:1, repetitions:0, easeFactor:2.5, dueDate:null };
+        var due  = meta.dueDate ? new Date(meta.dueDate) : today;
+        var diff = Math.round((due - today) / 86400000);
+        queue.push(Object.assign({ key: key, front: card.front || card.term || 'Card', topic: set.topic, due: diff }, meta));
+      });
+    });
+    return queue.sort(function (a, b) { return a.due - b.due; });
+  }
+
+  /* ── Alive messages ────────────────────── */
+  function spAliveMsg(p, readiness) {
+    var streak = p.studyStreak || 0, total = p.totalCards || 0, correct = p.totalCorrect || 0;
+    var pct = total > 0 ? Math.round(correct / total * 100) : 0;
+    var msgs = [];
+    if (streak >= 7) msgs.push('🔥 7-day streak! You\'re unstoppable.');
+    if (streak >= 3 && streak < 7) msgs.push('🔥 ' + streak + '-day streak — keep going!');
+    if (readiness >= 85) msgs.push('🎉 You\'re exam ready! Final polish time.');
+    if (readiness > 0 && readiness < 85) msgs.push('📈 You improved ' + Math.min(readiness, 12) + '% — keep pushing.');
+    if (pct >= 80 && total > 0) msgs.push('✅ Strong accuracy! Review weak spots to peak.');
+    if (streak === 0) msgs.push('💡 Study today to start your streak!');
+    return msgs.length ? msgs[Math.floor(Date.now() / 60000) % msgs.length] : '';
+  }
+
+  /* ── Hero ──────────────────────────────── */
+  function spRenderHero(p, readiness) {
+    var name = spGetExamName(), date = spGetExamDate();
+    var cards = spGetFlashcards();
+    var total    = cards.reduce(function (s, c) { return s + (c.cards || []).length; }, 0);
+    var mastered = cards.reduce(function (s, c) { return s + ((c.masteredCards || []).length || (c.cards || []).filter(function (x) { return x.mastered; }).length); }, 0);
+
+    var nameEl = $sp('sp-hero-exam-name');
+    if (nameEl) nameEl.textContent = name || (date ? 'Your Upcoming Exam' : 'Your Study Session');
+    if (readiness && $sp('sp-hero-readiness')) $sp('sp-hero-readiness').textContent = readiness + '%';
+    if ($sp('sp-hero-streak'))  $sp('sp-hero-streak').textContent  = '🔥 ' + (p.studyStreak || 0);
+    if ($sp('sp-hero-memory'))  $sp('sp-hero-memory').textContent  = mastered + ' / ' + total;
+    if ($sp('sp-alive-msg'))    $sp('sp-alive-msg').textContent    = spAliveMsg(p, readiness);
+
+    if (date) {
+      var days = Math.max(0, Math.round((new Date(date + 'T00:00:00') - new Date().setHours(0,0,0,0)) / 86400000));
+      if ($sp('sp-hero-days')) $sp('sp-hero-days').textContent = days;
+      if (days <= 3) {
+        var pb = $sp('sp-panic-banner');
+        if (pb) pb.style.display = 'block';
+        if ($sp('sp-panic-days')) $sp('sp-panic-days').textContent = days <= 0 ? 'TODAY' : days + ' day' + (days > 1 ? 's' : '');
+      }
+    }
+  }
+
+  /* ── Next Step ─────────────────────────── */
+  function spRenderNextStep(p, weakData, readiness) {
+    var srQueue = spGetSRQueue(), overdue = srQueue.filter(function (c) { return c.due <= 0; });
+    var quizCount = (p.quizResults || []).length, streak = p.studyStreak || 0;
+    var action = '', meta = '';
+    if (overdue.length > 0) {
+      action = 'Review ' + overdue.length + ' overdue flashcard' + (overdue.length > 1 ? 's' : '') + ' (' + overdue[0].topic + ')';
+      meta   = 'Estimated time: ' + Math.max(5, overdue.length * 2) + ' minutes · Spaced repetition';
+    } else if (weakData && weakData.weakSpots && weakData.weakSpots.length > 0) {
+      action = 'Review: ' + weakData.weakSpots[0].topic;
+      meta   = 'Error rate: ' + weakData.weakSpots[0].errorRate + '% · Highest priority weak spot';
+    } else if (quizCount === 0) {
+      action = 'Take your first practice quiz';
+      meta   = 'Upload your lecture slides and generate a quiz to get started';
+    } else if (streak === 0) {
+      action = 'Study today to start your streak';
+      meta   = 'Open a textbook or generate flashcards from your slides';
+    } else if (readiness && readiness >= 85) {
+      action = 'Take a full mock exam to confirm readiness';
+      meta   = 'You\'re at ' + readiness + '% — final simulation recommended';
+    } else {
+      action = 'Ask the AI tutor a question about your weakest topic';
+      meta   = 'Type a topic you\'re unsure about in the chat';
+    }
+    if ($sp('sp-next-action')) $sp('sp-next-action').textContent = action;
+    if ($sp('sp-next-meta'))   $sp('sp-next-meta').textContent   = meta;
+  }
+
+  /* ── Stats ─────────────────────────────── */
+  function spRenderStats(p) {
+    var total   = p.totalCards   || 0, correct = p.totalCorrect || 0;
+    var acc     = total > 0 ? Math.round(correct / total * 100) : 0;
+    var mins    = p.totalStudyTime || 0;
+    var cards   = spGetFlashcards();
+    var cardTotal = cards.reduce(function (s, c) { return s + (c.cards || []).length; }, 0);
+    if ($sp('sp-stat-sessions'))  $sp('sp-stat-sessions').textContent  = p.totalSessions || 0;
+    if ($sp('sp-stat-accuracy'))  $sp('sp-stat-accuracy').textContent  = acc + '%';
+    if ($sp('sp-stat-cards'))     $sp('sp-stat-cards').textContent     = cardTotal;
+    if ($sp('sp-stat-time'))      $sp('sp-stat-time').textContent      = (mins / 60).toFixed(1) + 'h';
+    if ($sp('sp-stat-questions')) $sp('sp-stat-questions').textContent = p.totalQuestions || 0;
+  }
+
+  /* ── Readiness Ring ────────────────────── */
+  function spRenderReadiness(data) {
+    var pct = data.readiness || 0;
+    var circ = 376.99, offset = circ - (circ * pct / 100);
+    var color = pct >= 85 ? '#4ade80' : pct >= 70 ? '#3b82f6' : pct >= 50 ? '#f0b429' : '#f87171';
+
+    var fill = $sp('sp-ring-fill');
+    if (fill) { fill.style.stroke = color; setTimeout(function () { fill.style.strokeDashoffset = offset; }, 80); }
+    if ($sp('sp-ring-pct')) { $sp('sp-ring-pct').textContent = pct + '%'; $sp('sp-ring-pct').style.color = color; }
+    if ($sp('sp-hero-readiness')) { $sp('sp-hero-readiness').textContent = pct + '%'; $sp('sp-hero-readiness').style.color = color; }
+    if ($sp('sp-readiness-verdict')) $sp('sp-readiness-verdict').textContent = data.verdict || '';
+    if ($sp('sp-readiness-chip')) {
+      $sp('sp-readiness-chip').textContent = pct >= 85 ? '✅ Exam Ready' : pct >= 70 ? '📈 Almost There' : pct >= 50 ? '📚 In Progress' : '⚠️ Needs Work';
+      $sp('sp-readiness-chip').className   = 'sp-chip ' + (pct >= 85 ? 'sp-chip-green' : pct >= 70 ? 'sp-chip-violet' : pct >= 50 ? 'sp-chip-amber' : 'sp-chip-red');
+    }
+    var b = data.breakdown || {};
+    var items = [
+      { label:'Quiz Score',     val: b.quiz_performance  || 0 },
+      { label:'Topic Coverage', val: b.topic_coverage    || 0 },
+      { label:'Flashcards',     val: b.flashcard_mastery || 0 },
+      { label:'Consistency',    val: b.consistency       || 0 },
+    ];
+    var bg = $sp('sp-breakdown-grid');
+    if (bg) bg.innerHTML = items.map(function (it) {
+      return '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:9px;padding:9px 10px;">'
+        + '<div style="font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:4px;">' + it.label + '</div>'
+        + '<div style="height:3px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;margin-bottom:4px;">'
+        + '<div style="height:100%;width:' + it.val + '%;border-radius:100px;background:linear-gradient(90deg,#8b7cf8,#a855f7);transition:width 1s ease;"></div></div>'
+        + '<div style="font-size:12px;font-weight:700;color:#8b7cf8;">' + it.val + '%</div></div>';
+    }).join('');
+  }
+
+  /* ── Confidence meter ──────────────────── */
+  function spRenderConfidence(p) {
+    var results = p.quizResults || [], topicMap = {};
+    results.forEach(function (r) {
+      if (!r.topic) return;
+      if (!topicMap[r.topic]) topicMap[r.topic] = { total:0, count:0 };
+      topicMap[r.topic].total += r.score || 0;
+      topicMap[r.topic].count++;
+    });
+    var topics = Object.entries(topicMap).map(function (e) { return { topic: e[0], pct: Math.round(e[1].total / e[1].count) }; }).sort(function (a,b) { return b.pct - a.pct; });
+    if (!topics.length) return;
+    var el = $sp('sp-conf-list');
+    if (el) el.innerHTML = topics.slice(0, 8).map(function (t) {
+      var c = t.pct >= 80 ? '#4ade80' : t.pct >= 60 ? '#f0b429' : '#f87171';
+      return '<div class="sp-conf-item"><div class="sp-conf-topic" title="' + t.topic + '">' + t.topic + '</div>'
+        + '<div class="sp-conf-bar-wrap"><div class="sp-conf-bar-fill" style="width:' + t.pct + '%;background:' + c + ';"></div></div>'
+        + '<div class="sp-conf-pct" style="color:' + c + ';">' + t.pct + '%</div></div>';
+    }).join('');
+  }
+
+  /* ── Last Mock Exam ────────────────────── */
+  function spRenderMock(p) {
+    var results = p.quizResults || [];
+    if (!results.length) return;
+    var last = results[0], score = last.score || 0;
+    var color = score >= 80 ? '#4ade80' : score >= 60 ? '#f0b429' : '#f87171';
+    var gap   = 85 - score, wrong = last.wrongTopics || [];
+    if ($sp('sp-mock-date')) $sp('sp-mock-date').textContent = new Date(last.timestamp).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    var body = $sp('sp-mock-body');
+    if (!body) return;
+    var adviceHtml = wrong.slice(0, 3).map(function (t) { return '<div class="sp-mock-item"><div class="sp-mock-dot"></div><div>' + t + '</div></div>'; }).join('');
+    body.innerHTML = '<div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:12px;flex-wrap:wrap;">'
+      + '<div><div class="sp-mock-score" style="color:' + color + ';">' + score + '%</div>'
+      + '<div class="sp-mock-label">Last Score · ' + (last.totalQuestions || '?') + ' questions</div></div>'
+      + (score < 85 ? '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:9px;padding:9px 12px;font-size:12px;color:rgba(255,255,255,.55);">'
+        + '<strong style="color:#8b7cf8;">+' + gap + '%</strong> needed to reach exam readiness</div>'
+        : '<div style="color:#4ade80;font-size:13px;font-weight:700;">🎉 Exam Ready Score!</div>') + '</div>'
+      + (wrong.length > 0 ? '<div style="font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:7px;">To reach 85%, review:</div><div class="sp-mock-advice">' + adviceHtml + '</div>'
+        : '<div style="color:#4ade80;font-size:12px;">No major mistakes! Focus on consistency.</div>');
+  }
+
+  /* ── Memory strength ───────────────────── */
+  function spRenderMemory() {
+    var cards = spGetFlashcards(), srData = spGetSRData(), today = new Date();
+    var total = 0, mastered = 0, dueToday = 0;
+    cards.forEach(function (set) {
+      var setId = (set.topic || 'general').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      (set.cards || []).forEach(function (card) {
+        total++;
+        var key = setId + '_' + (card.front || '').substring(0, 40);
+        var meta = srData[key];
+        if (meta && meta.repetitions >= 3) mastered++;
+        if (meta && meta.dueDate && new Date(meta.dueDate) <= today) dueToday++;
+      });
+    });
+    var pct = total > 0 ? Math.round(mastered / total * 100) : 0;
+    if ($sp('sp-memory-mastered'))  $sp('sp-memory-mastered').textContent  = mastered;
+    if ($sp('sp-memory-mastered2')) $sp('sp-memory-mastered2').textContent = mastered;
+    if ($sp('sp-memory-total'))     $sp('sp-memory-total').textContent     = total;
+    if ($sp('sp-memory-due'))       $sp('sp-memory-due').textContent       = dueToday;
+    if ($sp('sp-hero-memory'))      $sp('sp-hero-memory').textContent      = mastered + ' / ' + total;
+    setTimeout(function () { if ($sp('sp-memory-bar')) $sp('sp-memory-bar').style.width = pct + '%'; }, 100);
+  }
+
+  /* ── Progress graph ────────────────────── */
+  function spRenderProgress(p) {
+    var results = p.quizResults || [];
+    if (!results.length) return;
+    var weeks = {};
+    results.forEach(function (r) {
+      var d = new Date(r.timestamp), week = Math.floor((Date.now() - d.getTime()) / (7*24*3600*1000));
+      if (week > 5) return;
+      if (!weeks[week]) weeks[week] = { total:0, count:0 };
+      weeks[week].total += r.score || 0; weeks[week].count++;
+    });
+    var labels = ['5w','4w','3w','2w','1w','Now'];
+    var data = labels.map(function (_, i) { var w = 5-i; return weeks[w] ? Math.round(weeks[w].total / weeks[w].count) : null; });
+    var validData = data.filter(function (v) { return v !== null; });
+    if (validData.length < 2) return;
+    var maxVal = Math.max.apply(null, validData.concat([100]));
+    var el = $sp('sp-progress-graph');
+    if (!el) return;
+    el.innerHTML = data.map(function (v, i) {
+      if (v === null) return '<div class="sp-graph-bar-wrap"><div class="sp-graph-pct" style="color:transparent;">—</div><div class="sp-graph-bar" style="height:4px;background:rgba(255,255,255,.05);"></div><div class="sp-graph-label">' + labels[i] + '</div></div>';
+      var h = Math.round((v / maxVal) * 60) + 8;
+      var c = v >= 80 ? '#4ade80' : v >= 60 ? '#f0b429' : '#f87171';
+      return '<div class="sp-graph-bar-wrap"><div class="sp-graph-pct" style="color:' + c + ';">' + v + '%</div><div class="sp-graph-bar" style="height:' + h + 'px;background:' + c + ';opacity:.85;"></div><div class="sp-graph-label">' + labels[i] + '</div></div>';
+    }).join('');
+    var first = validData[0], last = validData[validData.length-1], diff = last - first;
+    var trend = $sp('sp-progress-trend');
+    if (trend) {
+      if (diff > 0)      trend.innerHTML = '<span style="color:#4ade80;">↑ +' + diff + '%</span> improvement since you started. Keep going!';
+      else if (diff < 0) trend.innerHTML = '<span style="color:#f0b429;">↓ ' + diff + '%</span> from your best. Review your weak spots.';
+      else               trend.textContent = 'Holding steady. Push for another improvement this week.';
+    }
+  }
+
+  /* ── Countdown ─────────────────────────── */
+  function spRenderCountdown(examDate) {
+    if (!examDate) return;
+    var exam = new Date(examDate + 'T00:00:00'), today = new Date(); today.setHours(0,0,0,0);
+    var diff = Math.round((exam - today) / 86400000);
+    if ($sp('sp-countdown-display')) $sp('sp-countdown-display').style.display = 'block';
+    if ($sp('sp-no-date-msg'))       $sp('sp-no-date-msg').style.display       = 'none';
+    if ($sp('sp-countdown-days'))    $sp('sp-countdown-days').textContent      = Math.max(0, diff);
+
+    var statusEl = $sp('sp-countdown-status'), subEl = $sp('sp-countdown-sub'), focusEl = $sp('sp-todays-focus');
+    if (!statusEl) return;
+    var configs = [
+      { test: diff <= 0,  sub:'Exam is today!',          style:'rgba(248,113,113,.3)',  bg:'rgba(248,113,113,.1)',  color:'#f87171', text:'🎓 Exam Day',   focus:'Stay calm. Review weak spots only. You got this.' },
+      { test: diff === 1, sub:'day until exam',           style:'rgba(248,113,113,.3)',  bg:'rgba(248,113,113,.1)',  color:'#f87171', text:'⚠️ Tomorrow!',  focus:'Light review only. Sleep early. No new topics tonight.' },
+      { test: diff <= 3,  sub:'days until exam',          style:'rgba(240,180,41,.3)',   bg:'rgba(240,180,41,.1)',   color:'#f0b429', text:'⏰ Very Soon',   focus:'Focus on weak spots only. Take one full mock exam today.' },
+      { test: diff <= 7,  sub:'days until exam',          style:'rgba(59,130,246,.3)',   bg:'rgba(59,130,246,.1)',   color:'#3b82f6', text:'📅 This Week',   focus:'One topic deep-dive per day + flashcard review session.' },
+      { test: true,       sub:'days until exam',          style:'rgba(74,222,128,.3)',   bg:'rgba(74,222,128,.1)',   color:'#4ade80', text:'✅ On Track',    focus:'Work through weak spots and do a flashcard session daily.' },
+    ];
+    var cfg = configs.find(function (c) { return c.test; });
+    if (subEl)    subEl.textContent = cfg.sub;
+    statusEl.style.cssText = 'padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid ' + cfg.style + ';background:' + cfg.bg + ';color:' + cfg.color + ';';
+    statusEl.textContent = cfg.text;
+    if (focusEl) focusEl.textContent = cfg.focus;
+    if (diff <= 3) {
+      var pb = $sp('sp-panic-banner'); if (pb) pb.style.display = 'block';
+      var pd = $sp('sp-panic-days'); if (pd) pd.textContent = diff <= 0 ? 'TODAY' : diff + ' day' + (diff > 1 ? 's' : '');
+    }
+  }
+
+  /* ── Streak ────────────────────────────── */
+  function spRenderStreak(p) {
+    var streak = p.studyStreak || 0;
+    if ($sp('sp-streak-num')) $sp('sp-streak-num').textContent = streak;
+    if ($sp('sp-streak-nav-num')) { $sp('sp-streak-nav-num').textContent = streak; if (streak > 0 && $sp('sp-streak-nav')) $sp('sp-streak-nav').style.display = 'flex'; }
+    var advice = streak === 0 ? 'Study today to start your streak!' : streak < 3 ? (3-streak) + ' more day' + (streak < 2 ? 's' : '') + ' to earn the 3-Day badge!' : streak < 7 ? (7-streak) + ' more days to earn Week Warrior!' : 'Amazing! Keep this streak alive.';
+    if ($sp('sp-streak-advice')) $sp('sp-streak-advice').textContent = advice;
+    if ($sp('sp-hero-streak')) $sp('sp-hero-streak').textContent = '🔥 ' + streak;
+    var cal = $sp('sp-streak-cal');
+    if (!cal) return;
+    var today = new Date(), actDates = new Set((p.recentActivity || []).map(function (a) { return new Date(a.timestamp).toDateString(); }));
+    cal.innerHTML = Array.from({ length:7 }, function (_, i) {
+      var d = new Date(today); d.setDate(d.getDate() - (6-i));
+      var lbl = ['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()];
+      var isToday = d.toDateString() === today.toDateString();
+      var done = actDates.has(d.toDateString());
+      var cls = isToday ? 'today' : done ? 'done' : 'empty';
+      return '<div class="sp-streak-day ' + cls + '">' + lbl + '</div>';
+    }).join('');
+  }
+
+  /* ── Weak spots ────────────────────────── */
+  function spRenderWeakSpots(data) {
+    if (!data || !data.weakSpots || !data.weakSpots.length) return;
+    if ($sp('sp-weak-meta')) $sp('sp-weak-meta').textContent = data.totalWeak + ' need work';
+    var el = $sp('sp-weak-list');
+    if (el) el.innerHTML = data.weakSpots.slice(0, 8).map(function (w) {
+      return '<div class="sp-weak-item"><div class="sp-weak-bar-wrap"><div class="sp-weak-topic">' + w.topic + '</div>'
+        + '<div class="sp-weak-bar"><div class="sp-weak-bar-fill ' + w.severity + '" style="width:' + w.errorRate + '%;"></div></div></div>'
+        + '<div class="sp-weak-pct ' + w.severity + '">' + w.errorRate + '%</div></div>';
+    }).join('');
+    var topicEls = $sp('sp-panic-topics');
+    if (topicEls) data.weakSpots.slice(0, 4).forEach(function (w) {
+      var el = document.createElement('div'); el.className = 'sp-panic-topic'; el.textContent = w.topic; topicEls.appendChild(el);
+    });
+  }
+
+  /* ── Badges ────────────────────────────── */
+  function spRenderBadges(data) {
+    if (!data) return;
+    var earned = data.earned || [], locked = data.locked || [];
+    if ($sp('sp-badge-count')) $sp('sp-badge-count').textContent = data.earnedCount + ' / ' + data.total;
+    if (earned.length > 0) {
+      var el = $sp('sp-earned-label'); if (el) el.style.display = 'block';
+      var eg = $sp('sp-earned-badges'); if (eg) eg.innerHTML = earned.map(function (b) { return '<div class="sp-badge-item earned" title="' + b.desc + '"><div class="sp-badge-emoji">' + b.icon + '</div><div class="sp-badge-name">' + b.name + '</div></div>'; }).join('');
+    }
+    if (locked.length > 0) {
+      var nl = $sp('sp-next-label'); if (nl) nl.style.display = 'block';
+      var lg = $sp('sp-locked-badges'); if (lg) lg.innerHTML = locked.slice(0, 6).map(function (b) { return '<div class="sp-badge-item locked"><div class="sp-badge-emoji">' + b.icon + '</div><div class="sp-badge-name">' + b.name + '</div><div class="sp-badge-desc">' + b.desc + '</div></div>'; }).join('');
+    }
+  }
+
+  /* ── SR Queue ──────────────────────────── */
+  function spRenderSRQueue() {
+    var queue = spGetSRQueue(), el = $sp('sp-sr-queue');
+    if (!queue.length || !el) return;
+    var due = queue.filter(function (c) { return c.due <= 0; });
+    var soon = queue.filter(function (c) { return c.due > 0 && c.due <= 3; });
+    var ok = queue.filter(function (c) { return c.due > 3; }).slice(0, 3);
+    var show = due.slice(0, 4).concat(soon.slice(0, 3)).concat(ok).slice(0, 8);
+    el.innerHTML = show.map(function (c) {
+      var tag = c.due <= 0 ? '<div class="sp-sr-tag due">Due now</div>' : c.due <= 3 ? '<div class="sp-sr-tag soon">In ' + c.due + 'd</div>' : '<div class="sp-sr-tag ok">In ' + c.due + 'd</div>';
+      return '<div class="sp-sr-card"><div class="sp-sr-card-text"><strong>' + c.topic + '</strong> — ' + (c.front || '').substring(0, 50) + ((c.front || '').length > 50 ? '…' : '') + '</div>' + tag + '</div>';
+    }).join('');
+    if (due.length > 0) el.innerHTML += '<div style="text-align:center;margin-top:10px;"><button class="sp-btn-primary" onclick="window.spPageClose()" style="padding:7px 16px;font-size:12px;">Study ' + due.length + ' overdue card' + (due.length > 1 ? 's' : '') + ' now →</button></div>';
+  }
+
+  /* ── Study time prediction ─────────────── */
+  window.spUpdatePrediction = function () {
+    var slider = $sp('sp-minutes-slider'); if (!slider) return;
+    var mins = parseInt(slider.value);
+    if ($sp('sp-slider-val')) $sp('sp-slider-val').textContent = mins + ' min';
+    var readiness = parseInt(($sp('sp-ring-pct') || {}).textContent) || 0;
+    var gap = Math.max(0, 85 - readiness);
+    var examDate = spGetExamDate(), el = $sp('sp-predict-result');
+    if (!el) return;
+    if (gap === 0) { el.innerHTML = '🎉 You\'ve already reached exam readiness! Take a mock exam to confirm.'; return; }
+    var daysNeeded = Math.ceil((gap * 30) / mins);
+    if (examDate) {
+      var daysLeft = Math.max(0, Math.round((new Date(examDate + 'T00:00:00') - new Date().setHours(0,0,0,0)) / 86400000));
+      if (daysNeeded <= daysLeft) el.innerHTML = 'If you study <strong>' + mins + ' min/day</strong>, you\'ll reach exam readiness in <strong>' + daysNeeded + ' day' + (daysNeeded !== 1 ? 's' : '') + '</strong> — with ' + (daysLeft - daysNeeded) + ' day' + (daysLeft - daysNeeded !== 1 ? 's' : '') + ' to spare. ✅';
+      else el.innerHTML = 'At <strong>' + mins + ' min/day</strong> you need <strong>' + daysNeeded + ' days</strong> but only have <strong>' + daysLeft + '</strong>. Try <strong>' + Math.ceil((gap * 30) / daysLeft) + ' min/day</strong> to make it in time.';
+    } else {
+      el.innerHTML = 'If you study <strong>' + mins + ' min/day</strong>, you\'ll reach exam readiness in approximately <strong>' + daysNeeded + ' day' + (daysNeeded !== 1 ? 's' : '') + '</strong>.';
+    }
+  };
+
+  window.spSaveSettings = function () {
+    var name = ($sp('sp-exam-name-input') || {}).value || ''; if (name) localStorage.setItem('chunks_exam_name', name.trim());
+  };
+
+  window.spSaveExamDate = function () {
+    var val = ($sp('sp-exam-date-input') || {}).value; if (!val) return;
+    localStorage.setItem('chunks_exam_date', val);
+    spRenderCountdown(val);
+    spUpdatePrediction();
+    spInit();
+  };
+
+  /* ── API helper ────────────────────────── */
+  function spApiPost(endpoint, body) {
+    return fetch(SP_API + endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); })
+      .catch(function () { return { success: false }; });
+  }
+
+  /* ── Main init ─────────────────────────── */
+  function spInit() {
+    var progress = spGetProgress(), examDate = spGetExamDate(), examName = spGetExamName();
+    if (examDate && $sp('sp-exam-date-input')) $sp('sp-exam-date-input').value = examDate;
+    if (examName && $sp('sp-exam-name-input')) $sp('sp-exam-name-input').value = examName;
+
+    spRenderStats(progress);
+    spRenderStreak(progress);
+    spRenderSRQueue();
+    spRenderConfidence(progress);
+    spRenderMock(progress);
+    spRenderMemory();
+    spRenderProgress(progress);
+    if (examDate) spRenderCountdown(examDate);
+    spUpdatePrediction();
+
+    Promise.all([
+      spApiPost('/progress/readiness',  { progress: progress, examDate: examDate }),
+      spApiPost('/progress/weak-spots', { progress: progress }),
+      spApiPost('/progress/badges',     { progress: progress }),
+    ]).then(function (results) {
+      var readinessData = results[0], weakData = results[1], badgeData = results[2];
+      if (readinessData.success) spRenderReadiness(readinessData);
+      if (weakData.success)      spRenderWeakSpots(weakData);
+      if (badgeData.success)     spRenderBadges(badgeData);
+      var readiness = readinessData.success ? readinessData.readiness : null;
+      spRenderHero(progress, readiness);
+      spRenderNextStep(progress, weakData.success ? weakData : null, readiness);
+      spUpdatePrediction();
+
+      if (examDate && weakData.success) {
+        spApiPost('/progress/study-plan', {
+          examDate: examDate,
+          bookId: localStorage.getItem('chunks_selected_book') || 'zumdahl',
+          progress: progress,
+          weakSpots: weakData.weakSpots || []
+        }).then(function (planData) {
+          if (planData.success && planData.days) {
+            var today = planData.days.find(function (d) { return d.isToday; });
+            var focusEl = $sp('sp-todays-focus');
+            if (today && today.tasks && today.tasks.length > 0 && focusEl) {
+              focusEl.innerHTML = today.tasks.map(function (t) {
+                return '<div style="margin-bottom:4px;">• ' + t.topic + ' <span style="color:rgba(255,255,255,.3);">' + (t.duration ? '(' + t.duration + ' min)' : '') + '</span></div>';
+              }).join('');
+            }
+          }
+        });
+      }
+    });
+  }
+
+  /* ── Public page open/close ────────────── */
+  window.spPageOpen = function () {
+    var page = document.getElementById('sp-page');
+    if (!page) return;
+
+    /* hide other page layers */
+    var fcPage = document.getElementById('fc-page');
+    if (fcPage) fcPage.classList.add('hidden');
+    var ws = document.getElementById('welcome-screen');
+    if (ws) ws.classList.add('hidden');
+    var mc = document.getElementById('main-container');
+    if (mc) mc.style.display = 'none';
+    var mh = document.getElementById('main-header');
+    if (mh) mh.style.display = 'none';
+    if (typeof leaveWorkspace === 'function') leaveWorkspace();
+
+    /* keep sidebar open (it's z-index 1000, above sp-page at 890) — do NOT force open/close, respect user state */
+
+    page.classList.remove('hidden');
+
+    /* active nav */
+    if (typeof window.setActiveNav === 'function') window.setActiveNav('studyplan');
+
+    spInit();
+  };
+
+  window.spPageClose = function () {
+    var page = document.getElementById('sp-page');
+    if (page) page.classList.add('hidden');
+    if (typeof window.setActiveNav === 'function') window.setActiveNav('home');
+    if (typeof goHome === 'function') goHome();
+  };
+
+  /* ── Patch collapse toggle to also update page wrapper ─── */
+  /* Patch setActiveNav to also close sp-page when navigating away */
+  document.addEventListener('DOMContentLoaded', function () {
+    /* patch goHome to also hide sp-page */
+    var _origGoHome = window.goHome;
+    window.goHome = function () {
+      var sp = document.getElementById('sp-page');
+      if (sp) sp.classList.add('hidden');
+      if (_origGoHome) return _origGoHome.apply(this, arguments);
+    };
+  });
+
+}());
+/* ══════════════════════════════════════════════
+   LIBRARY PAGE — SPA MODULE
+   Same architecture as fc-page and sp-page.
+   ══════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  /* ── Page open / close ─────────────────────── */
+
+  window.libraryPageOpen = function () {
+    var page = document.getElementById('library-page');
+    if (!page) return;
+
+    /* hide other page layers */
+    var fcPage = document.getElementById('fc-page');
+    if (fcPage) fcPage.classList.add('hidden');
+    var spPage = document.getElementById('sp-page');
+    if (spPage) spPage.classList.add('hidden');
+    var ws = document.getElementById('welcome-screen');
+    if (ws) ws.classList.add('hidden');
+    var mc = document.getElementById('main-container');
+    if (mc) mc.style.display = 'none';
+    var mh = document.getElementById('main-header');
+    if (mh) mh.style.display = 'none';
+    if (typeof leaveWorkspace === 'function') leaveWorkspace();
+
+    page.classList.remove('hidden');
+
+    /* active nav */
+    if (typeof window.setActiveNav === 'function') window.setActiveNav('library');
+
+    /* reset search + filter */
+    var inp = document.getElementById('lib-page-search');
+    if (inp) inp.value = '';
+    window.libPageFilter('');
+    window.libPageSection('all', document.querySelector('.lib-page-pill'));
+  };
+
+  window.libraryPageClose = function () {
+    var page = document.getElementById('library-page');
+    if (page) page.classList.add('hidden');
+    if (typeof window.setActiveNav === 'function') window.setActiveNav('home');
+    if (typeof goHome === 'function') goHome();
+  };
+
+  /* ── Filter by search text ─────────────────── */
+  window.libPageFilter = function (query) {
+    var q = (query || '').trim().toLowerCase();
+    var cards = document.querySelectorAll('#library-page .lib-book-card');
+    cards.forEach(function (card) {
+      var text = card.textContent.toLowerCase();
+      card.style.display = (!q || text.indexOf(q) !== -1) ? '' : 'none';
+    });
+    /* hide sections whose grids are now empty */
+    var sections = document.querySelectorAll('.lib-page-section');
+    sections.forEach(function (sec) {
+      if (!q) { sec.style.display = ''; return; }
+      var visible = Array.from(sec.querySelectorAll('.lib-book-card')).some(function (c) {
+        return c.style.display !== 'none';
+      });
+      sec.style.display = visible ? '' : 'none';
+    });
+  };
+
+  /* ── Filter by category pill ───────────────── */
+  window.libPageSection = function (key, btn) {
+    /* update pill active state */
+    var pills = document.querySelectorAll('.lib-page-pill');
+    pills.forEach(function (p) { p.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+
+    /* show/hide sections */
+    var sections = document.querySelectorAll('.lib-page-section');
+    sections.forEach(function (sec) {
+      if (key === 'all' || sec.getAttribute('data-section') === key) {
+        sec.style.display = '';
+      } else {
+        sec.style.display = 'none';
+      }
+    });
+  };
+
+  /* ── Patch goHome to also hide lib-page ─────── */
+  document.addEventListener('DOMContentLoaded', function () {
+    var _origGoHome = window.goHome;
+    window.goHome = function () {
+      var lp = document.getElementById('library-page');
+      if (lp) lp.classList.add('hidden');
+      if (_origGoHome) return _origGoHome.apply(this, arguments);
+    };
+
+    /* Patch setActiveNav: openLibraryModal still works as fallback */
+    var _origLib = window.openLibraryModal;
+    window.openLibraryModal = function () {
+      /* redirect to the new page instead of modal */
+      window.libraryPageOpen();
+    };
+  });
+
+}());
