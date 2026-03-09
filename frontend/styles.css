@@ -5902,7 +5902,7 @@ body.light-mode .health-tip-item:hover { background: rgba(0,0,0,0.03); }
 /* ══════════════════════════════════════════════════ */
 
 
-:root{--bg-base:#0b0c10;--bg-raised:#12131a;--bg-surface:#1a1b24;--bg-hover:#21222d;--bg-active:#272833;--border:rgba(255,255,255,0.07);--border-lit:rgba(240,180,41,0.55);--accent:#f0b429;--accent2:#8b7cf8;--accent-glow:rgba(240,180,41,0.22);--text-hi:#eeeef5;--text-mid:#8b8d9e;--text-lo:#42434f;--danger:#f43f5e;--danger-bg:rgba(244,63,94,0.1);--r-sm:8px;--r-md:12px;--r-lg:18px}
+/* ── CSS VARIABLES: consolidated into single :root below (line ~6960) ── */
 *,*::before,*::after{box-sizing:border-box}
 body{font-family:'Inter','DM Sans',system-ui,sans-serif!important;background:var(--bg-base)!important;-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important;text-rendering:optimizeLegibility!important}
 .chat-history-sidebar{background:#13141a!important;border-right:1px solid rgba(255,255,255,0.07)!important;box-shadow:4px 0 24px rgba(0,0,0,.4)!important;width:240px!important}
@@ -6532,8 +6532,9 @@ body.light-mode .ni-mode-pill:hover {
 }
 
 body.light-mode .ni-mode-pill.active {
-  background: rgba(240,180,41,0.15);
-  color: #4f46e5;
+  background: rgba(240,180,41,0.18);
+  border-color: rgba(240,180,41,0.40);
+  color: #b07800;
 }
 
 body.light-mode .ni-inner-divider {
@@ -6574,9 +6575,9 @@ body.light-mode .ni-pill:hover {
 }
 
 body.light-mode .ni-pill.active {
-  background: rgba(240,180,41,0.1);
-  border-color: rgba(240,180,41,0.35);
-  color: #4f46e5;
+  background: rgba(240,180,41,0.14);
+  border-color: rgba(240,180,41,0.38);
+  color: #b07800;
 }
 
 body.light-mode .ni-clear-btn {
@@ -6966,6 +6967,22 @@ body.compact-mode .sidebar-profile-footer { padding: 10px 14px !important; }
   --c-overlay: #1d1e27;
   --c-hover:   #22232e;
 
+  /* Legacy aliases (used in earlier component rules) */
+  --bg-base:    #0b0c10;
+  --bg-raised:  #12131a;
+  --bg-surface: #1a1b24;
+  --bg-hover:   #21222d;
+  --bg-active:  #272833;
+  --border:     rgba(255,255,255,0.07);
+  --border-lit: rgba(240,180,41,0.55);
+  --accent-glow: rgba(240,180,41,0.22);
+  --text-hi:    #eeeef5;
+  --text-mid:   #8b8d9e;
+  --text-lo:    #42434f;
+  --danger:     #f43f5e;
+  --danger-bg:  rgba(244,63,94,0.1);
+  /* Note: --accent, --accent2, --r-sm/md/lg defined below */
+
   /* Borders */
   --b-subtle:  rgba(255,255,255,0.048);
   --b-mild:    rgba(255,255,255,0.08);
@@ -6975,6 +6992,7 @@ body.compact-mode .sidebar-profile-footer { padding: 10px 14px !important; }
   /* Brand */
   --accent:    #f0b429;
   --accent-2:  #8b7cf8;
+  --accent2:   #8b7cf8; /* legacy alias */
   --accent-3:  #06b6d4;
   --green:     #10b981;
   --amber:     #f0b429;
@@ -9770,7 +9788,7 @@ body.light-mode [style*="background: rgb(26"] {
 body.light-mode .chat-history-item { background: transparent; }
 body.light-mode .chat-history-item:hover { background: rgba(0,0,0,0.04); }
 body.light-mode .chat-history-item.active { background: rgba(240,180,41,0.1); }
-body.light-mode .chat-history-item.active .chat-history-title { color: #5b6ee8; }
+body.light-mode .chat-history-item.active .chat-history-title { color: #b07800; }
 body.light-mode .chat-history-title { color: rgba(0,0,0,0.7); }
 body.light-mode .chat-dots-btn { color: rgba(0,0,0,0) !important; }
 body.light-mode .chat-history-item:hover .chat-dots-btn,
@@ -11265,11 +11283,11 @@ button.wbp-book:active { transform: translateY(-1px); }
 }
 
 .logo-text {
-  font-family: 'Syne', 'DM Sans', sans-serif !important;
+  font-family: 'Syne', 'DM Sans', sans-serif ;
   font-size: 15px !important;
   font-weight: 700 !important;
   color: #f0f0f0 !important;
-  letter-spacing: -0.01em !important;
+  letter-spacing: -0.01em ;
   background: none !important;
   -webkit-text-fill-color: #f0f0f0 !important;
 }
@@ -11291,9 +11309,9 @@ button.wbp-book:active { transform: translateY(-1px); }
 .sidebar-section-label {
   font-size: 10px !important;
   font-weight: 600 !important;
-  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
+  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace ;
+  letter-spacing: 0.08em ;
+  text-transform: uppercase ;
   color: #5a5a72 !important;
   padding: 0 16px 6px !important;
   display: block;
@@ -11306,7 +11324,7 @@ button.wbp-book:active { transform: translateY(-1px); }
   gap: 9px !important;
   padding: 8px 16px !important;
   font-size: 13px !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
   color: #9a9ab0 !important;
   cursor: pointer !important;
   transition: all 0.12s !important;
@@ -13233,11 +13251,11 @@ body.workspace-active #main-container.outline-collapsed {
 
 /* ── "Contents" title (replaces Outline/Pages tab pills) ── */
 .ws-outline-title {
-  font-family: 'Syne', 'DM Sans', sans-serif !important;
+  font-family: 'Syne', 'DM Sans', sans-serif ;
   font-size: 13px !important;
   font-weight: 700 !important;
   color: #f0b429 !important;
-  letter-spacing: 0.01em !important;
+  letter-spacing: 0.01em ;
   flex: 1 !important;
   user-select: none !important;
 }
@@ -13279,7 +13297,7 @@ body.workspace-active #main-container.outline-collapsed {
   font-size: 11.5px !important;
   padding: 6px 10px 6px 30px !important;
   outline: none !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
   transition: border-color 0.14s, background 0.14s !important;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.25)' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
@@ -13312,11 +13330,11 @@ body.workspace-active #main-container.outline-collapsed {
 #pdf-sidebar.ws-outline-panel .outline-section-header {
   font-size: 9.5px !important;
   font-weight: 700 !important;
-  letter-spacing: 0.1em !important;
-  text-transform: uppercase !important;
+  letter-spacing: 0.1em ;
+  text-transform: uppercase ;
   color: rgba(255,255,255,0.18) !important;
   padding: 12px 14px 4px !important;
-  font-family: 'DM Mono', monospace !important;
+  font-family: 'DM Mono', monospace ;
 }
 
 /* ── Outline items ── */
@@ -13330,7 +13348,7 @@ body.workspace-active #main-container.outline-collapsed {
   line-height: 1.4 !important;
   transition: color 0.1s, background 0.1s !important;
   border-left: 2.5px solid transparent !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
   font-weight: 400 !important;
   gap: 8px !important;
   border-radius: 0 6px 6px 0 !important;
@@ -13345,7 +13363,7 @@ body.workspace-active #main-container.outline-collapsed {
   border-left-color: #f0b429 !important;
   background: rgba(240,180,41,0.10) !important;
   font-weight: 600 !important;
-  font-family: 'Syne', 'DM Sans', sans-serif !important;
+  font-family: 'Syne', 'DM Sans', sans-serif ;
 }
 
 /* Level 1 — sub-chapter */
@@ -13355,13 +13373,13 @@ body.workspace-active #main-container.outline-collapsed {
   padding-left: 30px !important;
   font-size: 12px !important;
   color: rgba(255,255,255,0.32) !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
 }
 #pdf-sidebar.ws-outline-panel .outline-item.sub.active,
 #pdf-sidebar.ws-outline-panel .outline-item[data-level="1"].active,
 #pdf-sidebar.ws-outline-panel .outline-item.indent-1.active {
   color: #f0b429 !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
   font-weight: 600 !important;
 }
 
@@ -13380,7 +13398,7 @@ body.workspace-active #main-container.outline-collapsed {
   font-size: 12px !important;
   color: rgba(255,255,255,0.2) !important;
   line-height: 1.6 !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
   text-align: center !important;
 }
 
@@ -13799,11 +13817,11 @@ body.workspace-active #pdf-sidebar.ws-outline-panel .outline-title {
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
   background: none !important;
 }
 body.workspace-active #pdf-sidebar.ws-outline-panel .outline-page {
-  font-family: 'DM Mono', monospace !important;
+  font-family: 'DM Mono', monospace ;
   font-size: 10px !important;
   color: rgba(255,255,255,0.2) !important;
   font-weight: 400 !important;
@@ -13973,7 +13991,7 @@ body.workspace-active #pdf-sidebar.ws-outline-panel .outline-page {
   background: transparent !important;
   cursor: pointer !important;
   transition: all 0.1s !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
 }
 .msg-action-btn:hover {
   color: rgba(255,255,255,0.8) !important;
@@ -14007,7 +14025,7 @@ body.workspace-active #pdf-sidebar.ws-outline-panel .outline-page {
   background: transparent !important;
   cursor: pointer !important;
   transition: all 0.1s !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif ;
 }
 .msg-save-btn:hover {
   color: rgba(255,255,255,0.8) !important;
