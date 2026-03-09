@@ -14420,6 +14420,16 @@ body.workspace-active #pdf-sidebar.ws-outline-panel .outline-page {
 /* ── Push all page content below the global topbar ───────────── */
 body { padding-top: 46px; }
 
+/* ── Scrollbars appear automatically whenever content overflows ── */
+html {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+/* When zoomed, body should be scrollable */
+body {
+  min-width: 320px;  /* prevents layout collapse on extreme zoom */
+}
+
 /* The sidebar starts below the topbar */
 .chat-history-sidebar,
 .sidebar-hover-trigger {
@@ -14431,16 +14441,17 @@ body { padding-top: 46px; }
 .legacy-topbar { display: none !important; }
 
 /* ── Welcome screen: full height below topbar, scrollable ─────── */
+/* These !important rules override many conflicting earlier rules */
 .welcome-screen {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: calc(100vh - 46px);
-  background: #0f1017;
-  overflow: hidden;
-  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-  position: relative;
-  z-index: 10;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: calc(100vh - 46px) !important;
+  max-height: calc(100vh - 46px) !important;
+  background: #0f1017 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
 .welcome-screen.hidden { display: none !important; }
 .welcome-topbar { display: none !important; }

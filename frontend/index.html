@@ -1553,17 +1553,46 @@
     el.style.height = Math.min(el.scrollHeight, 160) + 'px';
   }
 
-  // ── ws2NavHome: hide ALL pages then go home ──────────────────
+  // ── ws2NavHome: forcefully close all pages and show welcome screen ──
   function ws2NavHome() {
-    // Hide every SPA page that could be covering the welcome screen
-    ['fc-page','sp-page','library-page','main-container','main-header'].forEach(function(id) {
+    // Step 1: hide every SPA page
+    var pageIds = ['fc-page','sp-page','library-page','main-container','main-header'];
+    pageIds.forEach(function(id) {
       var el = document.getElementById(id);
-      if (el) el.classList.add('hidden');
+      if (el) {
+        el.classList.add('hidden');
+        el.style.display = 'none';  // belt AND suspenders
+      }
     });
-    // Remove workspace-active body class
     document.body.classList.remove('workspace-active');
+
+    // Step 2: explicitly show welcome-screen
+    var ws = document.getElementById('welcome-screen');
+    if (ws) {
+      ws.classList.remove('hidden');
+      ws.classList.remove('fading-out');
+      ws.classList.remove('ws-entering');
+      ws.style.display = '';  // let CSS take over
+    }
+
     ws2SetActiveTab('home');
-    if (typeof goHome === 'function') goHome();
+
+    // Step 3: also call goHome() so app.js state syncs (sidebar, study flow, etc.)
+    if (typeof goHome === 'function') {
+      try { goHome(); } catch(e) {}
+    }
+
+    // Step 4: re-hide pages in case goHome() re-showed something
+    setTimeout(function() {
+      pageIds.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && id !== 'welcome-screen') {
+          el.classList.add('hidden');
+          el.style.display = 'none';
+        }
+      });
+      if (ws) ws.style.display = '';
+    }, 60);
   }
   window.ws2NavHome = ws2NavHome;
   function ws2SetActiveTab(tab) {
@@ -1577,46 +1606,60 @@
   // Expose so app.js / page open functions can call it
   window.ws2SetActiveTab = ws2SetActiveTab;
 
-  // ── New-user reset: clear all progress/history on fresh install ─
+  // ── Default: chat history is always empty (cleared every page load) ──
   (function() {
-    var SENTINEL = 'chunks_initialized_v1';
-    if (!localStorage.getItem(SENTINEL)) {
-      // First ever load — wipe everything so user starts at zero
-      var WIPE_KEYS = [
-        'chunks_chat_history','chunks_chat_history_v2','chunks_chat_sessions',
-        'chunks_progress','chunks_sr_data','chunks_saved_flashcards',
-        'chunks_saved_exams','chunks_saved_materials','chunks_saved_notes',
-        'chunks_study_flow_v2','chunks_ai_memory','chunks_onboarded',
-        'chunks_free_msg_count','chunks_last_chat_id','chunks_active_tab',
-        'chunks_exam_name','chunks_exam_date','chunks_personalization',
-        'chunksProgress_global'
-      ];
-      WIPE_KEYS.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
-      localStorage.setItem(SENTINEL, '1');
-    }
+    var CHAT_KEYS = [
+      'chunks_chat_history',
+      'chunks_chat_history_v2',
+      'chunks_chat_sessions',
+      'chunks_last_chat_id'
+    ];
+    CHAT_KEYS.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
   })();
 
-  // ── Zoom scrollbar: if window is zoomed in, enable body scroll ──
+  // ── Zoom scrollbar: appears automatically when browser is zoomed ──
   (function() {
+    // Store the baseline pixel ratio at page load (before any zoom)
+    var _baseRatio = window.devicePixelRatio || 1;
+    var _baseInnerW = window.innerWidth;
+
     function checkZoom() {
-      var ratio = window.devicePixelRatio || 1;
-      // On most browsers, zooming increases devicePixelRatio above the screen's native
-      // We use visualViewport if available for a more reliable signal
-      var zoomed = false;
-      if (window.visualViewport) {
-        zoomed = window.visualViewport.scale > 1.05;
+      var currentRatio = window.devicePixelRatio || 1;
+      // Browser Ctrl+/- zoom: innerWidth shrinks, devicePixelRatio increases
+      // We check if content overflows the viewport
+      var docW = document.documentElement.scrollWidth;
+      var viewW = window.innerWidth;
+      var docH = document.documentElement.scrollHeight;
+      var viewH = window.innerHeight;
+
+      var overflowsX = docW > viewW + 2;
+      var overflowsY = docH > viewH + 2;
+      // Also detect via devicePixelRatio change from baseline
+      var ratioZoomed = currentRatio > _baseRatio * 1.1;
+
+      var html = document.documentElement;
+      var body = document.body;
+
+      if (overflowsX || ratioZoomed) {
+        html.style.overflowX = 'auto';
+        body.style.overflowX = 'auto';
       } else {
-        zoomed = (window.outerWidth / window.innerWidth) > 1.05;
+        html.style.overflowX = '';
+        body.style.overflowX = '';
       }
-      document.documentElement.style.overflowY = zoomed ? 'auto' : '';
-      document.body.style.overflowY = zoomed ? 'auto' : '';
+      if (overflowsY || ratioZoomed) {
+        html.style.overflowY = 'auto';
+        body.style.overflowY = 'auto';
+      } else {
+        html.style.overflowY = '';
+        body.style.overflowY = '';
+      }
     }
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', checkZoom);
-      window.visualViewport.addEventListener('scroll', checkZoom);
-    }
+
     window.addEventListener('resize', checkZoom);
     document.addEventListener('DOMContentLoaded', checkZoom);
+    // Also run after a short delay to catch initial zoom state
+    setTimeout(checkZoom, 300);
   })();
   function ws2UpdateOnlineStatus() {
     var ind = document.getElementById('ws2-live-indicator');
