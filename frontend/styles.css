@@ -16137,3 +16137,93 @@ body:has(#welcome-screen:not(.hidden)) #sidebar-hover-trigger { display: none !i
 
 /* sf-dashboard hidden by default */
 #sf-dashboard { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════════════
+   WELCOME SCREEN — FINAL LAYOUT FIX (overrides all prior rules)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1. When welcome screen is visible, kill body padding from topnav */
+body:has(#welcome-screen:not(.hidden)) {
+  padding-top: 0 !important;
+}
+
+/* 2. Hide the topnav bar entirely on the welcome screen */
+body:has(#welcome-screen:not(.hidden)) #chunks-topnav {
+  display: none !important;
+}
+
+/* 3. Hide the app's floating sidebar — we have our own ws-sidebar */
+body:has(#welcome-screen:not(.hidden)) #chat-history-sidebar,
+body:has(#welcome-screen:not(.hidden)) #sidebar-hover-trigger {
+  display: none !important;
+}
+
+/* 4. Welcome screen: fixed, full viewport, flex ROW — final authority */
+#welcome-screen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  overflow: hidden !important;
+  background: #0c0d10 !important;
+  z-index: 100 !important;
+}
+#welcome-screen.hidden {
+  display: none !important;
+}
+
+/* 5. Sidebar: fixed width, full height */
+.ws-sidebar {
+  width: 240px !important;
+  min-width: 240px !important;
+  flex-shrink: 0 !important;
+  height: 100% !important;
+  background: #13141a !important;
+  border-right: 1px solid rgba(255,255,255,0.07) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* 6. Content area: fill remaining space */
+#sf-dashboard,
+#sf-original-welcome {
+  flex: 1 !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  position: relative !important;
+}
+
+#sf-original-welcome {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px 24px 32px !important;
+}
+
+/* 7. Exam dashboard hidden by default */
+#sf-dashboard { display: none !important; }
+
+/* 8. Glow behind hero content */
+#sf-original-welcome::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -60px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 700px !important;
+  height: 480px !important;
+  background: radial-gradient(ellipse at center, rgba(240,180,41,0.065) 0%, transparent 65%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+.wc-home-content { position: relative !important; z-index: 1 !important; }

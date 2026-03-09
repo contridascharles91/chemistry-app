@@ -1268,36 +1268,80 @@
 <!-- END STUDY FLOW OVERLAY -->
 
 <div class="welcome-screen hidden" id="welcome-screen">
-  <div class="welcome-topbar">
-    <div class="welcome-topbar-left">
-      <button class="menu-btn" onclick="toggleChatHistory()"><svg class="icon" width="20" height="20"><use href="#icon-menu"/></svg></button>
-      <div class="welcome-logo" style="display:flex;align-items:center;gap:7px;"><svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-  <defs>
-    <linearGradient id="wOrb1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f0b429"/><stop offset="100%" stop-color="#a855f7"/>
-    </linearGradient>
-    <linearGradient id="wOrb2" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#8b7cf8"/><stop offset="100%" stop-color="#f0b429"/>
-    </linearGradient>
-    <filter id="wGlow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <ellipse cx="50" cy="50" rx="42" ry="15" fill="none" stroke="url(#wOrb1)" stroke-width="6" filter="url(#wGlow)" opacity="0.92"/>
-  <ellipse cx="50" cy="50" rx="42" ry="15" fill="none" stroke="url(#wOrb2)" stroke-width="6" transform="rotate(60 50 50)" filter="url(#wGlow)" opacity="0.88"/>
-  <ellipse cx="50" cy="50" rx="42" ry="15" fill="none" stroke="url(#wOrb1)" stroke-width="6" transform="rotate(120 50 50)" filter="url(#wGlow)" opacity="0.85"/>
-  <circle cx="50" cy="50" r="8" fill="#fff" opacity="0.92"/>
-</svg>Chunks</div>
+
+  <!-- ══ MOCKUP SIDEBAR ══ -->
+  <div class="ws-sidebar" id="ws-sidebar">
+
+    <!-- Logo -->
+    <div class="ws-sidebar-top">
+      <svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+        <defs>
+          <linearGradient id="wsOrb1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f0b429"/><stop offset="100%" stop-color="#8b7cf8"/></linearGradient>
+          <linearGradient id="wsOrb2" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8b7cf8"/><stop offset="100%" stop-color="#f0b429"/></linearGradient>
+        </defs>
+        <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#wsOrb1)" stroke-width="7" opacity="0.95"/>
+        <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#wsOrb2)" stroke-width="7" transform="rotate(60 50 50)" opacity="0.88"/>
+        <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#wsOrb1)" stroke-width="7" transform="rotate(120 50 50)" opacity="0.82"/>
+        <circle cx="50" cy="50" r="7" fill="#f0b429"/>
+      </svg>
+      <span class="ws-sidebar-logo-text">Chunks</span>
     </div>
-    <div class="welcome-topbar-right">
-      <!-- Readiness indicator — shown when exam is active -->
-      <div id="sf-topbar-readiness">
-        <div class="sftr-exam" id="sftr-exam-name"></div>
-        <div class="sftr-bar"><div class="sftr-fill" id="sftr-fill" style="width:0%"></div></div>
-        <div class="sftr-label" id="sftr-pct">0%</div>
-        <button onclick="sfBackToDashboard()" class="btn-amber-chip">Study Plan ↑</button>
+
+    <!-- New Chat -->
+    <button class="ws-new-chat-btn" onclick="wsRestoreLayout(); createNewChat && createNewChat(); document.getElementById('welcome-screen').classList.add('hidden'); document.getElementById('main-container').style.display='flex'; enterWorkspace && enterWorkspace();">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Chat
+    </button>
+
+    <!-- Study nav -->
+    <div class="ws-sidebar-section">
+      <div class="ws-sidebar-label">STUDY</div>
+      <div class="ws-sidebar-item ws-active">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
       </div>
-      <!-- Original buttons removed for cleaner interface -->
+      <div class="ws-sidebar-item" onclick="openLibraryModal && openLibraryModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        Library
+      </div>
+      <div class="ws-sidebar-item" onclick="typeof sfToolFlashcards==='function'&&sfToolFlashcards()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+        Flashcards
+      </div>
+      <div class="ws-sidebar-item" onclick="typeof sfOpenFlow==='function'&&sfOpenFlow()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Study Plan
+      </div>
     </div>
-  </div>
+
+    <div class="ws-sidebar-divider"></div>
+
+    <!-- Recent chats — populated by JS -->
+    <div class="ws-sidebar-section" id="ws-recent-section">
+      <div class="ws-sidebar-label">RECENT CHATS</div>
+      <div id="ws-recent-chats"><!-- JS fills this --></div>
+    </div>
+
+    <!-- Profile row -->
+    <div class="ws-sidebar-footer">
+      <div class="ws-profile-row" onclick="toggleChatHistory && toggleChatHistory()">
+        <div class="ws-avatar" id="ws-avatar-initials">A</div>
+        <div class="ws-profile-info">
+          <div class="ws-profile-name" id="ws-profile-name">Account</div>
+          <div class="ws-profile-plan" id="ws-profile-plan">Free Plan</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3,#5a5a72);flex-shrink:0;"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+    </div>
+
+    <!-- Hidden: sf-topbar-readiness stub so JS doesn't throw -->
+    <div id="sf-topbar-readiness" style="display:none;">
+      <div id="sftr-exam-name"></div>
+      <div class="sftr-bar"><div class="sftr-fill" id="sftr-fill" style="width:0%"></div></div>
+      <div id="sftr-pct">0%</div>
+    </div>
+
+  </div><!-- end ws-sidebar -->
 
   <!-- STUDY DASHBOARD (shown when exam is set up) -->
   <div id="sf-dashboard">
@@ -1473,7 +1517,7 @@
   function wcSendAsk() {
     var val = document.getElementById('wc-ask-input').value.trim();
     if (!val) return;
-    // Hide welcome, show main workspace, send the message
+    wsRestoreLayout();
     document.getElementById('welcome-screen').classList.add('hidden');
     document.getElementById('main-container').style.display = 'flex';
     if (window._generalChatMode) {
@@ -1482,7 +1526,6 @@
       createNewChat && createNewChat();
       enterWorkspace && enterWorkspace();
     }
-    // Populate and submit
     setTimeout(function() {
       var inp = document.getElementById('chat-input');
       if (inp) {
@@ -1515,6 +1558,78 @@
 
   // wbpSetCat stub — keeps any JS that calls it from throwing
   function wbpSetCat(cat, btn) {}
+
+  // Populate sidebar recent chats + profile from localStorage
+  function wsPopulateSidebar() {
+    // Recent chats
+    var container = document.getElementById('ws-recent-chats');
+    if (container) {
+      try {
+        var sessions = JSON.parse(localStorage.getItem('eightysix_chat_sessions') || '[]');
+        var recent = sessions.slice(0, 3);
+        if (recent.length === 0) {
+          container.innerHTML = '';
+        } else {
+          container.innerHTML = recent.map(function(s) {
+            var title = (s.title || s.id || 'Chat').substring(0, 28);
+            return '<div class="ws-sidebar-item ws-chat-item" onclick="loadChatAndEnter(\'' + s.id + '\')">'
+              + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+              + title + '</div>';
+          }).join('');
+        }
+      } catch(e) {}
+    }
+    // Profile
+    try {
+      var u = JSON.parse(localStorage.getItem('chunks_user') || '{}');
+      var isGuest = localStorage.getItem('chunks_guest') === 'true';
+      var name = isGuest ? 'Guest' : (u.name || u.email || 'Account');
+      var plan = isGuest ? 'Guest' : (u.tier === 'paid' ? 'Pro Plan' : 'Free Plan');
+      var initials = name.charAt(0).toUpperCase();
+      var nameEl = document.getElementById('ws-profile-name');
+      var planEl = document.getElementById('ws-profile-plan');
+      var initEl = document.getElementById('ws-avatar-initials');
+      if (nameEl) nameEl.textContent = name.length > 16 ? name.substring(0, 16) : name;
+      if (planEl) planEl.textContent = plan;
+      if (initEl) initEl.textContent = initials;
+    } catch(e) {}
+  }
+
+  function loadChatAndEnter(chatId) {
+    document.getElementById('welcome-screen').classList.add('hidden');
+    document.getElementById('main-container').style.display = 'flex';
+    enterWorkspace && enterWorkspace();
+    setTimeout(function() { loadChat && loadChat(chatId); }, 80);
+  }
+
+  // Run on load and whenever welcome screen becomes visible
+  document.addEventListener('DOMContentLoaded', function() {
+    wsPopulateSidebar();
+    // JS fallback for browsers without body:has() support
+    wsApplyLayoutFix();
+  });
+
+  function wsApplyLayoutFix() {
+    var ws = document.getElementById('welcome-screen');
+    if (!ws || ws.classList.contains('hidden')) return;
+    // Hide topnav
+    var tn = document.getElementById('chunks-topnav');
+    if (tn) tn.style.display = 'none';
+    // Remove body padding
+    document.body.style.paddingTop = '0';
+    // Hide app sidebar
+    var sb = document.getElementById('chat-history-sidebar');
+    if (sb) sb.style.display = 'none';
+    var sbt = document.getElementById('sidebar-hover-trigger');
+    if (sbt) sbt.style.display = 'none';
+  }
+
+  // Restore when leaving welcome screen
+  function wsRestoreLayout() {
+    var tn = document.getElementById('chunks-topnav');
+    if (tn) tn.style.display = '';
+    document.body.style.paddingTop = '';
+  }
   </script>
 
 
