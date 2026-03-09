@@ -5957,7 +5957,54 @@ body{font-family:'Inter','DM Sans',system-ui,sans-serif!important;background:var
 .ctx-suggestion{display:flex;align-items:center;gap:10px;padding:11px 8px;color:rgba(255,255,255,0.75);font-size:14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.06);transition:color .15s;border-radius:6px;}
 .ctx-suggestion:last-child{border-bottom:none;}
 .ctx-suggestion:hover{color:#fff;background:rgba(255,255,255,0.04);}
-.inline-action-btn.active-blue{background:rgba(59,130,246,0.25);border-color:rgba(59,130,246,0.6);color:#93c5fd;}
+
+/* Attachment chip */
+.attachment-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(240,180,41,0.08);
+  border: 1px solid rgba(240,180,41,0.18);
+  border-radius: 8px;
+  padding: 2px 6px 2px 3px;
+  flex-shrink: 0;
+  max-width: 180px;
+}
+.attachment-chip-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  font-family: 'DM Sans', sans-serif;
+}
+.attachment-chip-remove {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.35);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: color 0.12s;
+}
+.attachment-chip-remove:hover { color: #f87171; }
+
+/* Contextual panel section label */
+.ctx-panel-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding: 0 4px;
+  font-family: 'DM Mono', 'Fira Code', ui-monospace, monospace;
+}
+.inline-action-btn.active-blue{background:rgba(240,180,41,0.22);border-color:rgba(240,180,41,0.55);color:#fcd34d;}
 .inline-action-btn svg{flex-shrink:0;opacity:0.85}
 @keyframes pmPop{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
 
@@ -6383,11 +6430,11 @@ body{font-family:'Inter','DM Sans',system-ui,sans-serif!important;background:var
 .ni-pill-icon svg { opacity: 0.65; }
 .ni-pill-icon:hover svg { opacity: 1; }
 
-/* Active-blue variant (for Search) */
+/* Active state (web search / study — uses amber design system) */
 .ni-pill.active-blue {
-  background: rgba(59,130,246,0.18);
-  border-color: rgba(59,130,246,0.45);
-  color: #93c5fd;
+  background: rgba(240,180,41,0.16);
+  border-color: rgba(240,180,41,0.42);
+  color: #f0b429;
 }
 
 /* Clear button */
@@ -13546,7 +13593,7 @@ body.workspace-active .ws-compact-sidebar .ws-cs-sep:first-of-type {
   width: 22px;
   height: 22px;
   border-radius: 5px;
-  background: linear-gradient(135deg, #f0b429, #f97316);
+  background: linear-gradient(135deg, #f0b429, #8b7cf8);
   display: flex;
   align-items: center;
   justify-content: center;
