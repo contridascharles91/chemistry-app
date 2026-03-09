@@ -1,0 +1,22 @@
+{
+  "name": "Chunks AI — Study Smarter",
+  "short_name": "Chunks AI",
+  "description": "AI-powered chemistry and science tutor with textbooks, flashcards, and smart quizzes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "en",
+  "icons": [
+    { "src": "/public/favicon-16x16.png",  "sizes": "16x16",   "type": "image/png" },
+    { "src": "/public/favicon-32x32.png",  "sizes": "32x32",   "type": "image/png" },
+    { "src": "/public/apple-touch-icon.png","sizes": "180x180", "type": "image/png" },
+    { "src": "/public/favicon.svg",         "sizes": "any",     "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "categories": ["education", "productivity"],
+  "screenshots": [
+    { "src": "/og-image.png", "sizes": "1200x630", "type": "image/png", "label": "Chunks AI Study Interface" }
+  ]
+}
