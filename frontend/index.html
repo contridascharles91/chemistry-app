@@ -111,6 +111,15 @@
 </script>
 </head>
 <body>
+<noscript>
+  <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0e0f1a;color:#e8eaf0;font-family:system-ui,sans-serif;font-size:16px;text-align:center;padding:24px;z-index:999999;">
+    <div>
+      <div style="font-size:32px;margin-bottom:12px;">⚠️</div>
+      <strong>JavaScript is required</strong><br>
+      <span style="color:rgba(232,234,240,0.6);font-size:14px;">Please enable JavaScript to use Chunks AI.</span>
+    </div>
+  </div>
+</noscript>
 <!-- SVG ICON DEFINITIONS - Reusable throughout the app -->
 <svg style="display: none;">
   <defs>
@@ -2738,7 +2747,7 @@
       </div>
       <div class="settings-field-group">
         <label class="settings-label">Full Name</label>
-        <input class="settings-input" id="profile-name-input" placeholder="Your name" value="Charles Daryll" oninput="updateAvatarPreview()">
+        <input class="settings-input" id="profile-name-input" placeholder="Your name" value="" oninput="updateAvatarPreview()">
       </div>
       <div class="settings-field-group">
         <label class="settings-label">Email</label>
@@ -3003,7 +3012,7 @@
           <button class="help-question" onclick="toggleHelp(this)">
             What is the complexity level slider? <span class="help-chevron">▼</span>
           </button>
-          <div class="help-answer">The level slider (1–5) controls how detailed the AI's answers are. Level 1 is simple beginner-friendly explanations, Level 5 gives university-level depth with full terminology.</div>
+          <div class="help-answer">The level slider (1–10) controls how detailed the AI's answers are. Level 1 is simple beginner-friendly explanations, Level 10 gives university-level depth with full terminology.</div>
         </div>
         <div class="help-item">
           <button class="help-question" onclick="toggleHelp(this)">
@@ -3272,15 +3281,19 @@ function renderSummaryResponse(text, source) {
   const ctx = canvas.getContext('2d');
 
   function resize() {
-    canvas.width  = canvas.offsetWidth  * devicePixelRatio;
-    canvas.height = canvas.offsetHeight * devicePixelRatio;
+    _cW = canvas.offsetWidth;
+    _cH = canvas.offsetHeight;
+    canvas.width  = _cW * devicePixelRatio;
+    canvas.height = _cH * devicePixelRatio;
     ctx.scale(devicePixelRatio, devicePixelRatio);
   }
   resize();
   window.addEventListener('resize', () => { resize(); });
 
-  const W = () => canvas.offsetWidth;
-  const H = () => canvas.offsetHeight;
+  let _cW = canvas.offsetWidth;
+  let _cH = canvas.offsetHeight;
+  const W = () => _cW;
+  const H = () => _cH;
 
   // -- Palette --
   const COLORS = ['#f0b429','#8b7cf8','#38bdf8','#34d399','#fcd34d','#f472b6'];
@@ -3760,10 +3773,14 @@ function clearThinkingMode() {
 // ==========================================================
 // 5. PATCH sendMessage - inject extras into every request
 // ==========================================================
-(function patchSendMessage() {
-  // Wait until sendMessage is defined (it's in a <script> tag above)
+(function patchSendMessage(attempts) {
+  attempts = attempts || 0;
+  // Wait until sendMessage is defined (exposed by app.js after defer load)
   const _orig = window.sendMessage;
-  if (!_orig) { setTimeout(patchSendMessage, 50); return; }
+  if (!_orig) {
+    if (attempts < 200) setTimeout(() => patchSendMessage(attempts + 1), 50); // max 10s wait
+    return;
+  }
 
   window.sendMessage = async function() {
     const input = document.getElementById('chat-input');

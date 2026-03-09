@@ -187,7 +187,7 @@
       if (result.success) {
         
         // Store selected book for auto-reload if server restarts
-        localStorage.setItem('eightysix_current_book', bookId);
+        localStorage.setItem('chunks_current_book', bookId);
         
         // Persist to My Textbooks history
         const _bk = bookLibrary[bookId] || {};
@@ -575,7 +575,7 @@
     // Keep trimming oldest messages until it fits or we have nothing left.
     const _trySave = (msgs) => {
       try {
-        localStorage.setItem('eightysix_chat_history', JSON.stringify(msgs));
+        localStorage.setItem('chunks_chat_history', JSON.stringify(msgs));
         return true;
       } catch(e) {
         return false; // QuotaExceededError
@@ -588,12 +588,12 @@
       messages = messages.slice(5);
     }
     // If even empty fails (extremely unlikely), silently ignore
-    try { localStorage.removeItem('eightysix_chat_history'); } catch(e) {}
+    try { localStorage.removeItem('chunks_chat_history'); } catch(e) {}
   }
 
   function loadChatHistory() {
     try {
-      const saved = localStorage.getItem('eightysix_chat_history');
+      const saved = localStorage.getItem('chunks_chat_history');
       if (!saved) return;
       const messages = JSON.parse(saved);
       const chat = document.getElementById('chat-messages');
@@ -622,7 +622,7 @@
       }
     } catch(e) {
       // Corrupted history — clear it and start fresh
-      try { localStorage.removeItem('eightysix_chat_history'); } catch(e2) {}
+      try { localStorage.removeItem('chunks_chat_history'); } catch(e2) {}
     }
   }
 
@@ -678,7 +678,7 @@
       }
       // Save to My Textbooks
       const _pdfBookId = 'local_' + currentPdfName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-      localStorage.setItem('eightysix_current_book', _pdfBookId);
+      localStorage.setItem('chunks_current_book', _pdfBookId);
       saveBookToHistory(_pdfBookId, currentPdfName, 'Local Upload', pdfDoc.numPages);
       renderChunksBooks();
       const progress = getProgressData();
@@ -1012,7 +1012,7 @@
 
   function renderMath(element) {
     if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-      MathJax.typesetPromise([element]).catch(err => console.log('MathJax error'));
+      MathJax.typesetPromise([element]).catch(err => console.warn('MathJax render error:', err));
     }
   }
 
@@ -1154,11 +1154,12 @@
           question: msg,
           mode: currentStudyMode,
           complexity: currentComplexity,
-          bookId: window._generalChatMode ? null : (localStorage.getItem('eightysix_current_book') || 'zumdahl'),
+          bookId: window._generalChatMode ? null : (localStorage.getItem('chunks_current_book') || 'zumdahl'),
           general_mode: !!window._generalChatMode,
           history: chatHistory,
           user_memory: getAIMemoryString(),
-          web_search: !!window._webSearchEnabled
+          web_search: !!window._webSearchEnabled,
+          user_tier: isFreeTier() ? 'free' : 'paid'
         })
       });
       
@@ -1327,6 +1328,9 @@
       sendMessage();
     }
   };
+
+  // Expose sendMessage globally so inline scripts in index.html can patch it
+  window.sendMessage = sendMessage;
 
   // Flashcards button handler — prompts for topic or uses current book
   // Flashcard modal controls
@@ -3588,8 +3592,8 @@
   }
 
   function downloadPDF() {
-    const savedPDF = localStorage.getItem('eightysix_pdf_data');
-    const savedName = localStorage.getItem('eightysix_pdf_name');
+    const savedPDF = localStorage.getItem('chunks_pdf_data');
+    const savedName = localStorage.getItem('chunks_pdf_name');
     if (!savedPDF) {
       _showToast('📄 No PDF loaded!');
       return;
@@ -3684,7 +3688,7 @@
       const stored = await idbGetPDF();
       if (!stored || !stored.buffer) return;
       // Only restore if a local book was active last session
-      const lastBook = localStorage.getItem('eightysix_current_book') || '';
+      const lastBook = localStorage.getItem('chunks_current_book') || '';
       if (!lastBook.startsWith('local_')) return;
       const typedarray = new Uint8Array(stored.buffer);
       pdfDoc = await pdfjsLib.getDocument({ data: typedarray }).promise;
@@ -4192,7 +4196,7 @@ function displayChatHistory() {
   }
 
   function saveChatSessions() {
-    localStorage.setItem('eightysix_chat_sessions', JSON.stringify(chatSessions));
+    localStorage.setItem('chunks_chat_sessions', JSON.stringify(chatSessions));
     // FIX 4: Also sync to Supabase for cross-device history
     _syncChatSessionsToCloud();
   }
@@ -4250,7 +4254,7 @@ function displayChatHistory() {
       }
       if (didUpdate || cloudKeys > localKeys) {
         chatSessions = merged;
-        localStorage.setItem('eightysix_chat_sessions', JSON.stringify(chatSessions));
+        localStorage.setItem('chunks_chat_sessions', JSON.stringify(chatSessions));
         displayChatHistory();
         return true;
       }
@@ -4262,7 +4266,7 @@ function displayChatHistory() {
 
   function loadChatSessions() {
     // Load from localStorage immediately (fast, synchronous)
-    const saved = localStorage.getItem('eightysix_chat_sessions');
+    const saved = localStorage.getItem('chunks_chat_sessions');
     if (saved) {
       try {
         chatSessions = JSON.parse(saved);
@@ -4849,11 +4853,11 @@ function updateComplexityCompact(value) {
   };
   const labelEl = document.getElementById('complexity-label-compact');
   if (labelEl) labelEl.textContent = labels[currentComplexity] || '';
-  localStorage.setItem('eightysix_complexity', currentComplexity);
+  localStorage.setItem('chunks_complexity', currentComplexity);
 }
 
 window.addEventListener('load', () => {
-  const savedComplexity = localStorage.getItem('eightysix_complexity');
+  const savedComplexity = localStorage.getItem('chunks_complexity');
   if (savedComplexity) {
     const slider = document.getElementById('complexity-slider-compact');
     if (slider) {
@@ -6994,7 +6998,7 @@ function renderChunksBooks() {
   if (!booksList) return;
 
   // Update current book page count if open
-  const currentBookId = localStorage.getItem('eightysix_current_book');
+  const currentBookId = localStorage.getItem('chunks_current_book');
   if (currentBookId && pdfDoc) {
     const books = getSavedBooks();
     const entry = books.find(b => b.id === currentBookId);
@@ -7453,7 +7457,7 @@ function closeBook() {
   // Clear PDF state
   if (typeof pdfDoc !== 'undefined') pdfDoc = null;
   if (typeof currentPdfName !== 'undefined') currentPdfName = null;
-  localStorage.removeItem('eightysix_current_book');
+  localStorage.removeItem('chunks_current_book');
   // Clear the uploaded PDF from IndexedDB cache
   if (typeof idbClearPDF === 'function') idbClearPDF().catch(() => {});
 
@@ -7524,7 +7528,7 @@ function enterChatFromWelcome(prefill) {
   enterWorkspace(); // add body.workspace-active + set hash
 
   // No book loaded → fullscreen general AI mode
-  const hasBook = !!(localStorage.getItem('eightysix_current_book') && typeof pdfDoc !== 'undefined' && pdfDoc);
+  const hasBook = !!(localStorage.getItem('chunks_current_book') && typeof pdfDoc !== 'undefined' && pdfDoc);
   if (!hasBook) {
     mainContainer.classList.add('chat-fullscreen');
     window._generalChatMode = true; try { sessionStorage.setItem('chunks_general_mode', '1'); } catch(e) {}
@@ -7553,7 +7557,7 @@ function sendWelcomeChat() {
   mainContainer.style.display = 'flex';
   enterWorkspace();
 
-  const hasBook = !!(localStorage.getItem('eightysix_current_book') && typeof pdfDoc !== 'undefined' && pdfDoc);
+  const hasBook = !!(localStorage.getItem('chunks_current_book') && typeof pdfDoc !== 'undefined' && pdfDoc);
   if (!hasBook) {
     mainContainer.classList.add('chat-fullscreen');
     window._generalChatMode = true; try { sessionStorage.setItem('chunks_general_mode', '1'); } catch(e) {}
@@ -7813,7 +7817,7 @@ function saveSettingsAndClose() {
 }
 
 function exportChats() {
-  const sessions = localStorage.getItem('eightysix_chat_sessions') || '{}';
+  const sessions = localStorage.getItem('chunks_chat_sessions') || '{}';
   const blob = new Blob([sessions], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -7824,7 +7828,7 @@ function exportChats() {
 
 function clearAllChats() {
   if (!confirm('Clear ALL chat history? This cannot be undone.')) return;
-  localStorage.removeItem('eightysix_chat_sessions');
+  localStorage.removeItem('chunks_chat_sessions');
   if (typeof chatSessions !== 'undefined') { chatSessions = {}; }
   if (typeof createNewChat === 'function') createNewChat();
   if (typeof displayChatHistory === 'function') displayChatHistory();
@@ -8651,14 +8655,7 @@ async function handleLogout() {
 function isFreeTier() {
   if (isGuestMode) return true;
   const u = JSON.parse(localStorage.getItem('chunks_user') || '{}');
-  // If we have a user record, check their tier explicitly.
-  // Only default to 'free' when tier is explicitly 'free' (not when it's absent
-  // because the profile hasn't loaded yet — in that ambiguous state, allow access
-  // so paid users don't see a flash of free-tier restrictions on page load).
-  if (u && u.tier) return u.tier === 'free';
-  // No tier info yet — if we have a user id, assume paid (avoids false lock-out).
-  if (u && u.id) return false;
-  return true;
+  return u.tier === 'free';
 }
 
 // Free tier: 20 AI messages per day (tracked in localStorage)
@@ -9717,7 +9714,7 @@ function _showUpgradeNudge() {
 (function () {
   'use strict';
 
-  var SP_API = window.__API_URL__ || 'https://chemistry-app-production.up.railway.app';
+  var SP_API = window.__API_URL__ || window.API_URL || 'https://chunksai.up.railway.app';
 
   /* ── Data helpers ──────────────────────── */
   function spGetProgress()        { try { return JSON.parse(localStorage.getItem('chunks_progress') || '{}'); }        catch(e) { return {}; } }

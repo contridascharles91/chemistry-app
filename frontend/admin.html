@@ -509,7 +509,7 @@ function loadConfig() {
   // Use BOTH URLs as fallback in case one is the active deployment.
   const BACKENDS = [
     'https://chunksai.up.railway.app',
-    'https://chemistry-app-production.up.railway.app'
+    'https://chunksai.up.railway.app'
   ];
   _configPromise = (async () => {
     // Try up to 3 times with increasing timeouts (handles Railway cold starts)
@@ -706,7 +706,7 @@ function showApp(){
 async function doLogout(){_adminActive=false;_signingOut=true;await sb.auth.signOut();_signingOut=false;showLogin();}
 
 // OPENROUTER
-const BACKEND_URL='https://chemistry-app-production.up.railway.app';
+const BACKEND_URL='https://chunksai.up.railway.app';
 
 async function loadOpenRouterCredits(){
   const body=document.getElementById('or-credit-body');

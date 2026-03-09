@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data: blob:; img-src 'self' data: blob: https:; connect-src 'self' https://chemistry-app-production.up.railway.app https://chunksai.up.railway.app https://*.supabase.co https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data: blob:; img-src 'self' data: blob: https:; connect-src 'self' https://chunksai.up.railway.app https://chunksai.up.railway.app https://*.supabase.co https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none';">
 <title>Exam Command Center — Chunks AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -559,7 +559,7 @@ nav{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:cente
 </div>
 
 <script>
-const API = window.__API_URL__ || window.API_URL || 'https://chunksai.up.railway.app';
+const API = window.__API_URL__ || 'https://chunksai.up.railway.app';
 
 // ── Data helpers ──────────────────────────────────────────────────────────────
 function getProgress()        { try { return JSON.parse(localStorage.getItem('chunks_progress') || '{}'); }        catch(e) { return {}; } }
