@@ -1253,288 +1253,235 @@
 </div>
 <!-- END STUDY FLOW OVERLAY -->
 
+<!-- NEW WELCOME SCREEN — replaces everything from line 1256 to closing </div> before LIBRARY PAGE -->
 <div class="welcome-screen hidden" id="welcome-screen">
-  <div class="welcome-topbar">
-    <div class="welcome-topbar-left">
-      <button class="menu-btn" onclick="toggleChatHistory()"><svg class="icon" width="20" height="20"><use href="#icon-menu"/></svg></button>
-      <div class="welcome-logo" style="display:flex;align-items:center;gap:7px;"><svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-  <defs>
-    <linearGradient id="wOrb1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f0b429"/><stop offset="100%" stop-color="#a855f7"/>
-    </linearGradient>
-    <linearGradient id="wOrb2" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#8b7cf8"/><stop offset="100%" stop-color="#f0b429"/>
-    </linearGradient>
-    <filter id="wGlow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <ellipse cx="50" cy="50" rx="42" ry="15" fill="none" stroke="url(#wOrb1)" stroke-width="6" filter="url(#wGlow)" opacity="0.92"/>
-  <ellipse cx="50" cy="50" rx="42" ry="15" fill="none" stroke="url(#wOrb2)" stroke-width="6" transform="rotate(60 50 50)" filter="url(#wGlow)" opacity="0.88"/>
-  <ellipse cx="50" cy="50" rx="42" ry="15" fill="none" stroke="url(#wOrb1)" stroke-width="6" transform="rotate(120 50 50)" filter="url(#wGlow)" opacity="0.85"/>
-  <circle cx="50" cy="50" r="8" fill="#fff" opacity="0.92"/>
-</svg>Chunks</div>
-    </div>
-    <div class="welcome-topbar-right">
-      <!-- Readiness indicator — shown when exam is active -->
-      <div id="sf-topbar-readiness">
-        <div class="sftr-exam" id="sftr-exam-name"></div>
-        <div class="sftr-bar"><div class="sftr-fill" id="sftr-fill" style="width:0%"></div></div>
-        <div class="sftr-label" id="sftr-pct">0%</div>
-        <button onclick="sfBackToDashboard()" class="btn-amber-chip">Study Plan ↑</button>
+
+  <!-- ═══════════════════════════════════════
+       NEW TWO-COLUMN LAYOUT
+       Left: sidebar (reuses existing sidebar)
+       Right: main content area
+       ═══════════════════════════════════════ -->
+  <div class="ws2-layout">
+
+    <!-- ── LEFT SIDEBAR ───────────────────── -->
+    <aside class="ws2-sidebar">
+
+      <!-- Logo -->
+      <div class="ws2-logo" onclick="goHome()">
+        <svg width="26" height="26" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+          <defs>
+            <linearGradient id="ws2Orb1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f0b429"/><stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+            <linearGradient id="ws2Orb2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#8b7cf8"/><stop offset="100%" stop-color="#f0b429"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#ws2Orb1)" stroke-width="7" opacity="0.95"/>
+          <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#ws2Orb2)" stroke-width="7" transform="rotate(60 50 50)" opacity="0.88"/>
+          <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#ws2Orb1)" stroke-width="7" transform="rotate(120 50 50)" opacity="0.82"/>
+          <circle cx="50" cy="50" r="7" fill="#f0b429"/>
+        </svg>
+        <span class="ws2-logo-text">Chunks</span>
       </div>
-      <!-- Original buttons removed for cleaner interface -->
-    </div>
-  </div>
 
-  <!-- STUDY DASHBOARD (shown when exam is set up) -->
-  <div id="sf-dashboard">
-    <div class="sfd-wrap" style="padding-top:28px;padding-bottom:60px;">
+      <!-- New Chat -->
+      <button class="ws2-new-chat-btn" onclick="createNewChat()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Chat
+      </button>
 
-      <!-- Hero -->
-      <div class="sfd-hero">
-        <div class="section-label" style="color:#fcd34d;margin-bottom:4px;">📌 Today's Study Session</div>
-        <div style="font-size:22px;font-weight:800;color:#e8eaf0;margin-bottom:6px;" id="sfd-title">—</div>
-        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
-          <div style="font-size:13px;color:rgba(232,234,240,.45);">Exam in <strong style="color:#f59e0b;" id="sfd-days">—</strong> days</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div style="height:5px;width:100px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;">
-              <div style="height:100%;border-radius:100px;background:linear-gradient(90deg,#f0b429,#a855f7);transition:width .6s;width:0%;" id="sfd-readiness-bar"></div>
+      <!-- Nav: Study -->
+      <div class="ws2-nav-section">
+        <div class="ws2-nav-label">STUDY</div>
+        <div class="ws2-nav-item ws2-nav-active" onclick="goHome()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Home
+        </div>
+        <div class="ws2-nav-item" onclick="window.libraryPageOpen()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Library
+        </div>
+        <div class="ws2-nav-item" onclick="window.fcPageOpen()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Flashcards
+        </div>
+        <div class="ws2-nav-item" onclick="window.spPageOpen()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Study Plan
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="ws2-sidebar-divider"></div>
+
+      <!-- Recent Chats -->
+      <div class="ws2-nav-section ws2-recents-section">
+        <div class="ws2-nav-label">RECENT CHATS</div>
+        <div class="ws2-recent-list" id="ws2-recent-list">
+          <!-- Populated by JS via MutationObserver watching chat-history-list -->
+        </div>
+      </div>
+
+      <!-- Spacer -->
+      <div style="flex:1;"></div>
+
+      <!-- Profile Footer -->
+      <div class="ws2-profile-footer" onclick="toggleProfilePopup()">
+        <div class="ws2-avatar" id="ws2-avatar-letter">A</div>
+        <div class="ws2-profile-info">
+          <div class="ws2-profile-name" id="ws2-profile-name">Alex Cruz</div>
+          <div class="ws2-profile-plan" id="ws2-profile-plan">Free Plan</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.4;"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+
+    </aside>
+
+    <!-- ── RIGHT: MAIN CONTENT ─────────────── -->
+    <main class="ws2-main">
+
+      <!-- STUDY DASHBOARD (shown when exam is active) -->
+      <div id="sf-dashboard">
+        <div class="sfd-wrap" style="padding-top:28px;padding-bottom:60px;">
+          <div class="sfd-hero">
+            <div class="section-label" style="color:#fcd34d;margin-bottom:4px;">📌 Today's Study Session</div>
+            <div style="font-size:22px;font-weight:800;color:#e8eaf0;margin-bottom:6px;" id="sfd-title">—</div>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+              <div style="font-size:13px;color:rgba(232,234,240,.45);">Exam in <strong style="color:#f59e0b;" id="sfd-days">—</strong> days</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="height:5px;width:100px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;">
+                  <div style="height:100%;border-radius:100px;background:linear-gradient(90deg,#f0b429,#a855f7);transition:width .6s;width:0%;" id="sfd-readiness-bar"></div>
+                </div>
+                <span style="font-size:13px;font-weight:700;color:#fcd34d;" id="sfd-readiness-pct">0% ready</span>
+              </div>
+              <div style="font-size:12px;color:#10b981;font-weight:600;" id="sfd-streak"></div>
             </div>
-            <span style="font-size:13px;font-weight:700;color:#fcd34d;" id="sfd-readiness-pct">0% ready</span>
+            <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:8px;">Today's tasks</div>
+            <div id="sfd-tasks"></div>
           </div>
-          <div style="font-size:12px;color:#10b981;font-weight:600;" id="sfd-streak"></div>
+          <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:10px;">Your study tools</div>
+          <div class="sfd-tools">
+            <div class="sfd-tool" onclick="sfToolTutor()"><div class="sfd-tool-icon">🤖</div><div class="sfd-tool-name">AI Tutor</div><div class="sfd-tool-desc">Ask anything about your weak topics.</div><div class="sfd-pill sfd-pill-red" id="sfd-tutor-pill">⚠️ Focus on weak topics</div></div>
+            <div class="sfd-tool" onclick="sfToolFlashcards()"><div class="sfd-tool-icon">🃏</div><div class="sfd-tool-name">Flashcards</div><div class="sfd-tool-desc">Spaced repetition review.</div><div class="sfd-pill sfd-pill-amber" id="sfd-cards-pill">Cards due today</div></div>
+            <div class="sfd-tool" onclick="sfToolQuiz()"><div class="sfd-tool-icon">📝</div><div class="sfd-tool-name">Practice Quiz</div><div class="sfd-tool-desc">Re-quiz on weakest topics.</div><div class="sfd-pill sfd-pill-red" id="sfd-quiz-pill">Weak topics only</div></div>
+            <div class="sfd-tool" onclick="sfToolReviewer()"><div class="sfd-tool-icon">📖</div><div class="sfd-tool-name">Reviewer</div><div class="sfd-tool-desc">Key concepts &amp; formulas.</div><div class="sfd-pill sfd-pill-indigo" id="sfd-reviewer-pill">Generate reviewer</div></div>
+            <div class="sfd-tool" onclick="sfToolMock()"><div class="sfd-tool-icon">🎓</div><div class="sfd-tool-name">Full Mock Exam</div><div class="sfd-tool-desc">All topics, timed.</div><div class="sfd-pill sfd-pill-purple" id="sfd-mock-pill">Unlocks at 75%</div></div>
+            <div class="sfd-tool" onclick="sfToolDiagnostic()"><div class="sfd-tool-icon">📊</div><div class="sfd-tool-name">Re-run Diagnostic</div><div class="sfd-tool-desc">Update your readiness score.</div><div class="sfd-pill sfd-pill-indigo">Update weak spots</div></div>
+          </div>
+          <div style="text-align:center;margin-top:24px;">
+            <button onclick="sfStartNew()" class="btn-sf-new">+ Set up a different exam</button>
+          </div>
         </div>
-
-        <!-- Today's tasks -->
-        <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:8px;">Today's tasks</div>
-        <div id="sfd-tasks"></div>
       </div>
 
-      <!-- Tools grid -->
-      <div class="section-label" style="color:rgba(232,234,240,.28);margin-bottom:10px;">Your study tools</div>
-      <div class="sfd-tools">
+      <!-- ORIGINAL WELCOME CONTENT -->
+      <div id="sf-original-welcome">
 
-        <div class="sfd-tool" onclick="sfToolTutor()">
-          <div class="sfd-tool-icon">🤖</div>
-          <div class="sfd-tool-name">AI Tutor</div>
-          <div class="sfd-tool-desc">Ask anything about your weak topics. Gets context from your book.</div>
-          <div class="sfd-pill sfd-pill-red" id="sfd-tutor-pill">⚠️ Focus on weak topics</div>
+        <!-- ── HERO ───────────────────────────── -->
+        <div class="ws2-hero">
+
+          <!-- Badge -->
+          <div class="ws2-hero-badge">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="m11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+            AI Study Assistant
+          </div>
+
+          <!-- Title -->
+          <h1 class="ws2-hero-title">Study smarter,<br>not <span class="ws2-title-accent">harder</span></h1>
+          <p class="ws2-hero-sub">Ask questions, explore your textbooks, and generate<br>study tools — all in one place.</p>
+
+          <!-- Search Box -->
+          <div class="ws2-search-box">
+            <textarea
+              class="ws2-search-input"
+              id="ws2-search-input"
+              placeholder="Ask anything about your textbooks..."
+              rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();ws2LaunchChat();}"
+              oninput="ws2AutoResize(this)"
+            ></textarea>
+            <div class="ws2-search-footer">
+              <div class="ws2-search-chips">
+                <button class="ws2-chip ws2-chip-book" id="ws2-chip-book" onclick="ws2ToggleBookPicker()">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  <span id="ws2-chip-book-label">Atkins Chemistry</span>
+                </button>
+                <button class="ws2-chip" onclick="uploadPDFFromWelcome()">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                  Upload PDF
+                </button>
+                <button class="ws2-chip ws2-chip-general" onclick="ws2SetGeneralMode()">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                  General AI
+                </button>
+              </div>
+              <button class="ws2-send-btn" onclick="ws2LaunchChat()" title="Send">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Cards -->
+          <div class="ws2-cards">
+            <div class="ws2-card" onclick="window.libraryPageOpen()">
+              <div class="ws2-card-icon ws2-card-icon-green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+              <div class="ws2-card-title">Open Textbook</div>
+              <div class="ws2-card-desc">Browse your library and study alongside AI</div>
+            </div>
+            <div class="ws2-card" onclick="window.fcPageOpen()">
+              <div class="ws2-card-icon ws2-card-icon-purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div class="ws2-card-title">Flashcards</div>
+              <div class="ws2-card-desc">Generate and review study cards from any chapter</div>
+            </div>
+            <div class="ws2-card" onclick="uploadPDFFromWelcome()">
+              <div class="ws2-card-icon ws2-card-icon-blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+              </div>
+              <div class="ws2-card-title">Upload PDF</div>
+              <div class="ws2-card-desc">Add your own notes or textbooks to chat with</div>
+            </div>
+          </div>
+
+          <!-- Suggestion Pills -->
+          <div class="ws2-suggestions">
+            <div class="ws2-suggestions-label">TRY ASKING</div>
+            <div class="ws2-suggestion-pills">
+              <button class="ws2-pill" onclick="ws2Suggest(this)">Explain Le Chatelier's principle</button>
+              <button class="ws2-pill" onclick="ws2Suggest(this)">Summarize Chapter 5 of Atkins</button>
+              <button class="ws2-pill" onclick="ws2Suggest(this)">Generate flashcards on thermodynamics</button>
+              <button class="ws2-pill" onclick="ws2Suggest(this)">What is Gibbs free energy?</button>
+              <button class="ws2-pill" onclick="ws2Suggest(this)">Quiz me on organic reactions</button>
+              <button class="ws2-pill" onclick="ws2Suggest(this)">Compare SN1 vs SN2 mechanisms</button>
+            </div>
+          </div>
+
+        </div><!-- end ws2-hero -->
+
+        <!-- Exam setup CTA -->
+        <div id="sf-inline-cta" class="sf-inline-cta" style="display:none;">
+          <div class="sf-cta-left">
+            <span class="sf-cta-icon">🎯</span>
+            <div>
+              <div class="sf-cta-title">Want to ace your next exam?</div>
+              <div class="sf-cta-sub">Set up a study plan — takes 60 seconds.</div>
+            </div>
+          </div>
+          <button class="sf-cta-btn" onclick="sfOpenFlow()">Set up exam →</button>
+          <button class="sf-cta-close" onclick="this.closest('#sf-inline-cta').style.display='none'" title="Dismiss">✕</button>
         </div>
 
-        <div class="sfd-tool" onclick="sfToolFlashcards()">
-          <div class="sfd-tool-icon">🃏</div>
-          <div class="sfd-tool-name">Flashcards</div>
-          <div class="sfd-tool-desc">Spaced repetition review. Your cards are waiting.</div>
-          <div class="sfd-pill sfd-pill-amber" id="sfd-cards-pill">Cards due today</div>
-        </div>
+      </div><!-- end sf-original-welcome -->
 
-        <div class="sfd-tool" onclick="sfToolQuiz()">
-          <div class="sfd-tool-icon">📝</div>
-          <div class="sfd-tool-name">Practice Quiz</div>
-          <div class="sfd-tool-desc">Re-quiz on your weakest topics to raise your score.</div>
-          <div class="sfd-pill sfd-pill-red" id="sfd-quiz-pill">Weak topics only</div>
-        </div>
+    </main><!-- end ws2-main -->
 
-        <div class="sfd-tool" onclick="sfToolReviewer()">
-          <div class="sfd-tool-icon">📖</div>
-          <div class="sfd-tool-name">Reviewer</div>
-          <div class="sfd-tool-desc">Key concepts, formulas & common mistakes for your exam.</div>
-          <div class="sfd-pill sfd-pill-indigo" id="sfd-reviewer-pill">Generate reviewer</div>
-        </div>
+  </div><!-- end ws2-layout -->
 
-        <div class="sfd-tool" onclick="sfToolMock()">
-          <div class="sfd-tool-icon">🎓</div>
-          <div class="sfd-tool-name">Full Mock Exam</div>
-          <div class="sfd-tool-desc">All topics, timed. Available once you hit 75% readiness.</div>
-          <div class="sfd-pill sfd-pill-purple" id="sfd-mock-pill">Unlocks at 75%</div>
-        </div>
-
-        <div class="sfd-tool" onclick="sfToolDiagnostic()">
-          <div class="sfd-tool-icon">📊</div>
-          <div class="sfd-tool-name">Re-run Diagnostic</div>
-          <div class="sfd-tool-desc">Retake the diagnostic to update your readiness score.</div>
-          <div class="sfd-pill sfd-pill-indigo">Update weak spots</div>
-        </div>
-
-      </div>
-
-      <!-- Switch exam / setup new -->
-      <div style="text-align:center;margin-top:24px;">
-        <button onclick="sfStartNew()" class="btn-sf-new">+ Set up a different exam</button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ORIGINAL WELCOME CONTENT (hidden when exam is active) -->
-  <div id="sf-original-welcome">
-
-    <!-- ══ HERO SECTION — always visible, never scrolled away ══ -->
-    <div class="wc-hero">
-
-      <!-- Title -->
-      <div class="wc-hero-title">
-        <h1 class="welcome-title">Your AI study partner.<br><span class="wc-title-accent">Grounded to your textbook.</span></h1>
-        <p class="welcome-subtitle">Ask anything. Get answers from the exact page — not a hallucination.</p>
-      </div>
-
-      <!-- Streak widget (shows when active) -->
-      <div id="streak-welcome-widget" onclick="sfToolFlashcards && sfToolFlashcards()">
-        <div class="streak-fire">🔥</div>
-        <div>
-          <div class="streak-count" id="streak-count-display">1</div>
-        </div>
-        <div class="streak-label" id="streak-label-display">
-          day streak
-          <small>Keep it going — study something today!</small>
-        </div>
-        <div class="streak-cta">Continue →</div>
-      </div>
-
-      <!-- Dual CTA — MAIN ACTIONS -->
-      <div class="wc-cta-row">
-        <button class="wc-cta-primary" onclick="sfOpenFlow()">
-          <div class="wc-cta-icon" style="background:linear-gradient(135deg,#f0b429,#a855f7);">🎯</div>
-          <div class="wc-cta-text">
-            <span class="wc-cta-label">I have an exam coming up</span>
-            <span class="wc-cta-sub">Upload slides → reviewer, flashcards &amp; quiz in 60 sec</span>
-          </div>
-          <svg class="wc-cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="wc-cta-secondary" onclick="document.querySelector('.wc-books-section') && document.querySelector('.wc-books-section').scrollIntoView({behavior:'smooth'})">
-          <div class="wc-cta-icon" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);">📖</div>
-          <div class="wc-cta-text">
-            <span class="wc-cta-label">Browse textbooks</span>
-            <span class="wc-cta-sub">Pick a book &amp; start asking questions</span>
-          </div>
-          <svg class="wc-cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-      </div>
-
-    </div><!-- end wc-hero -->
-
-    <!-- ══ BOOKS SECTION — scrollable ══ -->
-    <div class="welcome-content wc-books-section">
-
-      <!-- Section label -->
-      <div class="wc-section-label">
-        <div class="wc-section-line"></div>
-        <span>Choose your textbook</span>
-        <div class="wc-section-line"></div>
-      </div>
-
-      <!-- Subject filter pills -->
-      <div class="wbp-pills" id="wbp-pills">
-        <button class="wbp-pill wbp-pill-active" onclick="wbpSetCat('all',this)">All</button>
-        <button class="wbp-pill" onclick="wbpSetCat('chemistry',this)">Chemistry</button>
-        <button class="wbp-pill" onclick="wbpSetCat('anatomy',this)">Anatomy</button>
-        <button class="wbp-pill" onclick="wbpSetCat('other',this)">More coming</button>
-      </div>
-
-      <!-- Book grid -->
-      <div class="wbp-grid" id="wbp-grid">
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('zumdahl')">
-          <div class="wbp-cover"><img src="/public/covers/zumdahl.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📗'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">General Chemistry</div>
-            <div class="wbp-author">Zumdahl &amp; Zumdahl</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('klein')">
-          <div class="wbp-cover"><img src="/public/covers/klein.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📙'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Organic Chemistry</div>
-            <div class="wbp-author">David Klein</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('atkins')">
-          <div class="wbp-cover"><img src="/public/covers/atkins.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📘'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Physical Chemistry</div>
-            <div class="wbp-author">Atkins &amp; de Paula</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('harris')">
-          <div class="wbp-cover"><img src="/public/covers/harris.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📒'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Quantitative Analysis</div>
-            <div class="wbp-author">Daniel C. Harris</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="anatomy" onclick="selectBook('anaphy2e')">
-          <div class="wbp-cover"><img src="/public/covers/anaphy2e.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='🫀'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Anatomy &amp; Physiology</div>
-            <div class="wbp-author">Patton &amp; Thibodeau</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="anatomy" onclick="selectBook('netter')">
-          <div class="wbp-cover"><img src="/public/covers/netter.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='🧬'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Atlas of Human Anatomy</div>
-            <div class="wbp-author">Frank H. Netter</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <!-- Coming Soon -->
-        <div class="wbp-book wbp-soon" data-cat="other">
-          <div class="wbp-cover wbp-cover-placeholder">📚</div>
-          <div class="wbp-info">
-            <div class="wbp-title">Campbell Biology</div>
-            <div class="wbp-author">Urry et al.</div>
-            <div class="wbp-badge wbp-coming">⏳ Soon</div>
-          </div>
-        </div>
-
-        <div class="wbp-book wbp-soon" data-cat="other">
-          <div class="wbp-cover wbp-cover-placeholder">📚</div>
-          <div class="wbp-info">
-            <div class="wbp-title">Fundamentals of Nursing</div>
-            <div class="wbp-author">Potter &amp; Perry</div>
-            <div class="wbp-badge wbp-coming">⏳ Soon</div>
-          </div>
-        </div>
-
-      </div><!-- end wbp-grid -->
-
-      <!-- Footer -->
-      <div class="wbp-footer">
-        <span class="wbp-divider-label">Don't see your book?</span>
-        <button class="wbp-upload-btn" onclick="uploadPDFFromWelcome()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-          Upload your own PDF
-        </button>
-        <button class="wbp-browse-all-btn" onclick="window.libraryPageOpen()">View full library →</button>
-      </div>
-
-      <!-- Exam setup CTA (shown by JS after sfInit) -->
-      <div id="sf-inline-cta" class="sf-inline-cta" style="display:none;">
-        <div class="sf-cta-left">
-          <span class="sf-cta-icon">🎯</span>
-          <div>
-            <div class="sf-cta-title">Want to ace your next exam?</div>
-            <div class="sf-cta-sub">Set up a study plan — takes 60 seconds.</div>
-          </div>
-        </div>
-        <button class="sf-cta-btn" onclick="sfOpenFlow()">Set up exam →</button>
-        <button class="sf-cta-close" onclick="this.closest('#sf-inline-cta').style.display='none'" title="Dismiss">✕</button>
-      </div>
-
-    </div><!-- end wc-books-section -->
-  </div><!-- end sf-original-welcome -->
-
-  <!-- wbp filter script -->
+  <!-- wbp filter script (kept for compat) -->
   <script>
   function wbpSetCat(cat, btn) {
     document.querySelectorAll('.wbp-pill').forEach(p => p.classList.remove('wbp-pill-active'));
@@ -1545,73 +1492,141 @@
       card.style.display = show ? '' : 'none';
     });
   }
-  </script>
 
-  <!-- ── SYNCHRONOUS WELCOME REVEAL ─────────────────────────────────────
-       Runs while HTML is still being parsed — before any browser paint.
-       welcome-screen starts with class="hidden" (display:none) so nothing
-       shows until this script decides exactly what to reveal.
-       NOTE: opacity:1 !important in styles.css makes opacity useless here,
-       so we control visibility entirely through the .hidden class.
-  ──────────────────────────────────────────────────────────────────────── -->
-  <script>
-  (function() {
+  // ── Sync profile footer from app.js user data ──
+  function ws2SyncProfile() {
     try {
-      var ws   = document.getElementById('welcome-screen');
-      var orig = document.getElementById('sf-original-welcome');
-      var dash = document.getElementById('sf-dashboard');
+      var u = JSON.parse(localStorage.getItem('chunks_user') || '{}');
+      var isGuest = localStorage.getItem('chunks_guest') === 'true';
+      var name = u.name || u.email || (isGuest ? 'Guest' : 'User');
+      var plan = u.tier ? (u.tier.charAt(0).toUpperCase() + u.tier.slice(1) + ' Plan') : 'Free Plan';
+      var initial = name.charAt(0).toUpperCase();
+      var nameEl = document.getElementById('ws2-profile-name');
+      var planEl = document.getElementById('ws2-profile-plan');
+      var avatarEl = document.getElementById('ws2-avatar-letter');
+      if (nameEl) nameEl.textContent = name;
+      if (planEl) planEl.textContent = plan;
+      if (avatarEl) avatarEl.textContent = initial;
+    } catch(e) {}
+  }
+  document.addEventListener('DOMContentLoaded', ws2SyncProfile);
+  window.addEventListener('chunks-auth-ready', ws2SyncProfile);
 
-      var lastChatId  = sessionStorage.getItem('chunks_last_chat_id');
-      var generalMode = sessionStorage.getItem('chunks_general_mode') === '1';
-      var user        = JSON.parse(localStorage.getItem('chunks_user') || 'null');
-      var isGuest     = localStorage.getItem('chunks_guest') === 'true';
-      var sfState     = JSON.parse(localStorage.getItem('chunks_study_flow_v2') || 'null');
-
-      // sessionStorage only survives a page REFRESH (clears on tab close).
-      // If lastChatId is present, the user just refreshed from inside a chat.
-      // We intentionally do NOT check localStorage for the session here —
-      // the session may only exist in Supabase (synced after auth, which can
-      // take 25+ seconds on Railway cold start). Keeping welcome hidden prevents
-      // books from showing for 25 seconds before loadChat finally fires.
-      var hasChat    = !!(lastChatId || generalMode);
-      var isLoggedIn = isGuest || !!(user && user.email);
-      var hasExam    = !!(sfState && sfState.examName);
-
-      if (isLoggedIn && hasChat) {
-        // Refreshed from inside a chat — keep welcome hidden.
-        // loadChat() or the restore handler will show the correct view.
-        return;
-      }
-
-      // If hash is #workspace, keep welcome hidden (workspace will restore itself)
-      if (window.location.hash === '#workspace') {
-        return;
-      }
-
-      // We're showing welcome. Decide what's inside it.
-      if (hasExam) {
-        // Show dashboard, hide book picker — both decided before first paint.
-        if (orig) orig.style.display = 'none';
-        if (dash) {
-          dash.classList.add('sf-visible');
-          dash.style.animation = 'none'; // skip opacity:0→1 flash
-          // Re-arm animation after 2 frames for future shows
-          requestAnimationFrame(function(){requestAnimationFrame(function(){
-            if (dash) dash.style.animation = '';
-          });});
-        }
-      }
-      // Always reveal welcome-screen at the end (whether showing books or dashboard)
-      ws.classList.remove('hidden');
-
-    } catch(e) {
-      // Failsafe — always show welcome if something goes wrong
-      var ws2 = document.getElementById('welcome-screen');
-      if (ws2) ws2.classList.remove('hidden');
+  // ── Sync recent chats from existing sidebar ──
+  function ws2SyncRecentChats() {
+    var src = document.getElementById('chat-history-list');
+    var dst = document.getElementById('ws2-recent-list');
+    if (!src || !dst) return;
+    var items = src.querySelectorAll('.chunks-chat-item, .chat-item, [data-chat-id]');
+    if (items.length === 0) {
+      dst.innerHTML = '<div class="ws2-no-chats">No recent chats</div>';
+      return;
     }
-  })();
+    dst.innerHTML = '';
+    var shown = 0;
+    items.forEach(function(item) {
+      if (shown >= 5) return;
+      var clone = item.cloneNode(true);
+      clone.classList.add('ws2-recent-item');
+      dst.appendChild(clone);
+      shown++;
+    });
+  }
+
+  // Watch for chat list changes
+  document.addEventListener('DOMContentLoaded', function() {
+    ws2SyncRecentChats();
+    var src = document.getElementById('chat-history-list');
+    if (src && window.MutationObserver) {
+      new MutationObserver(ws2SyncRecentChats).observe(src, { childList: true, subtree: true });
+    }
+    // Also sync on welcome screen becoming visible
+    var ws = document.getElementById('welcome-screen');
+    if (ws && window.MutationObserver) {
+      new MutationObserver(function(muts) {
+        muts.forEach(function(m) {
+          if (m.target.id === 'welcome-screen' && !m.target.classList.contains('hidden')) {
+            ws2SyncProfile();
+            ws2SyncRecentChats();
+          }
+        });
+      }).observe(ws, { attributes: true, attributeFilter: ['class'] });
+    }
+  });
+
+  // ── Book chip — show currently selected book ──
+  function ws2UpdateBookChip() {
+    var label = document.getElementById('ws2-chip-book-label');
+    if (!label) return;
+    var bookId = localStorage.getItem('chunks_current_book') || '';
+    var names = {
+      zumdahl: 'Zumdahl Chemistry',
+      atkins: 'Atkins Chemistry',
+      klein: 'Klein Organic',
+      harris: 'Harris Analytical',
+      anaphy2e: 'Anatomy & Physiology',
+      netter: 'Netter Atlas'
+    };
+    label.textContent = names[bookId] || (window.currentPdfName ? window.currentPdfName.replace('.pdf','').slice(0,20) : 'No Book');
+  }
+  document.addEventListener('DOMContentLoaded', ws2UpdateBookChip);
+  document.addEventListener('pdf-loaded', ws2UpdateBookChip);
+
+  // ── Launch chat from search box ──
+  function ws2LaunchChat() {
+    var input = document.getElementById('ws2-search-input');
+    var msg = input ? input.value.trim() : '';
+    if (!msg) return;
+
+    // Delegate to enterChatFromWelcome then set message
+    if (typeof enterChatFromWelcome === 'function') {
+      enterChatFromWelcome(msg);
+    } else if (typeof createNewChat === 'function') {
+      createNewChat();
+      setTimeout(function() {
+        var ci = document.getElementById('chat-input');
+        if (ci) { ci.value = msg; if (typeof sendMessage === 'function') sendMessage(); }
+      }, 200);
+    }
+    if (input) input.value = '';
+  }
+
+  // ── General AI mode ──
+  function ws2SetGeneralMode() {
+    if (typeof enterChatFromWelcome === 'function') {
+      window._generalChatMode = true;
+      enterChatFromWelcome();
+    } else if (typeof createNewChat === 'function') {
+      window._generalChatMode = true;
+      createNewChat();
+    }
+  }
+
+  // ── Suggestion pill click ──
+  function ws2Suggest(btn) {
+    var input = document.getElementById('ws2-search-input');
+    if (input) {
+      input.value = btn.textContent;
+      input.focus();
+      ws2AutoResize(input);
+    }
+  }
+
+  // ── Book picker (open the welcome book grid) ──
+  function ws2ToggleBookPicker() {
+    if (typeof window.libraryPageOpen === 'function') {
+      window.libraryPageOpen();
+    }
+  }
+
+  // ── Auto-resize textarea ──
+  function ws2AutoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+  }
   </script>
-</div>
+
+
 
 <!-- LIBRARY PAGE (SPA — behaves like fc-page and sp-page) -->
 <div class="lib-page hidden" id="library-page">
