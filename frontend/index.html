@@ -111,6 +111,29 @@
 </script>
 </head>
 <body>
+
+<!-- ── TOP NAV BAR ─────────────────────────────────────────────── -->
+<div class="chunks-topnav" id="chunks-topnav">
+  <!-- Left: Logo + name -->
+  <div class="chunks-topnav-logo">
+    <svg width="18" height="18" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="tn1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f0b429"/><stop offset="100%" stop-color="#8b7cf8"/></linearGradient>
+        <linearGradient id="tn2" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8b7cf8"/><stop offset="100%" stop-color="#f0b429"/></linearGradient>
+      </defs>
+      <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#tn1)" stroke-width="7" opacity="0.95"/>
+      <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#tn2)" stroke-width="7" transform="rotate(60 50 50)" opacity="0.88"/>
+      <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="url(#tn1)" stroke-width="7" transform="rotate(120 50 50)" opacity="0.82"/>
+      <circle cx="50" cy="50" r="7" fill="#f0b429"/>
+    </svg>
+    <span class="chunks-topnav-name">Chunks</span>
+  </div>
+  <!-- Right: Live badge -->
+  <div class="chunks-topnav-badge">
+    <span class="chunks-topnav-dot"></span>
+    Live
+  </div>
+</div>
 <!-- SVG ICON DEFINITIONS - Reusable throughout the app -->
 <svg style="display: none;">
   <defs>
