@@ -1359,188 +1359,142 @@
   <!-- ORIGINAL WELCOME CONTENT (hidden when exam is active) -->
   <div id="sf-original-welcome">
 
-    <!-- ══ HERO SECTION — always visible, never scrolled away ══ -->
-    <div class="wc-hero">
+    <!-- ══ HOMEPAGE — exact mockup layout ══ -->
+    <div class="wc-home-content">
 
-      <!-- Title -->
-      <div class="wc-hero-title">
-        <div class="welcome-eyebrow home-eyebrow">
-          <span class="home-eyebrow-dot" style="width:5px;height:5px;border-radius:50%;background:#f0b429;animation:pulse-dot 2s ease-in-out infinite;flex-shrink:0;"></span>
+      <!-- Hero -->
+      <div class="wc-home-hero">
+        <div class="wc-eyebrow">
+          <span class="wc-eyebrow-dot"></span>
           AI Study Assistant
         </div>
-        <h1 class="welcome-title">Study smarter,<br>not <em>harder</em></h1>
-        <p class="welcome-subtitle">Ask questions, explore your textbooks, and generate study tools — all in one place.</p>
+        <h1 class="wc-home-title">Study smarter,<br>not <em>harder</em></h1>
+        <p class="wc-home-subtitle">Ask questions, explore your textbooks, and generate study tools — all in one place.</p>
       </div>
 
-      <!-- Streak widget (shows when active) -->
-      <div id="streak-welcome-widget" onclick="sfToolFlashcards && sfToolFlashcards()">
-        <div class="streak-fire">🔥</div>
-        <div>
-          <div class="streak-count" id="streak-count-display">1</div>
+      <!-- Ask Box -->
+      <div class="wc-ask-box" id="wc-ask-box">
+        <textarea class="wc-ask-textarea" id="wc-ask-input" placeholder="Ask anything about your textbooks…" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();wcSendAsk();}"
+          oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';"
+        ></textarea>
+        <div class="wc-ask-footer">
+          <div class="wc-ask-actions">
+            <button class="wc-ask-pill active" id="wc-book-pill" onclick="openLibraryModal()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              <span id="wc-book-pill-label">Open Textbook</span>
+            </button>
+            <button class="wc-ask-pill" onclick="uploadPDFFromWelcome()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 16 12 12 8 16"/><line x1="12" x2="12" y1="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Upload PDF
+            </button>
+            <button class="wc-ask-pill" id="wc-general-pill" onclick="wcToggleGeneral()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+              General AI
+            </button>
+          </div>
+          <button class="wc-ask-send" onclick="wcSendAsk()" title="Send">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
         </div>
-        <div class="streak-label" id="streak-label-display">
-          day streak
-          <small>Keep it going — study something today!</small>
+      </div>
+
+      <!-- Quick Cards -->
+      <div class="wc-quick-row">
+        <div class="wc-quick-card" onclick="openLibraryModal()">
+          <div class="wc-quick-icon wc-qi-yellow">📚</div>
+          <div class="wc-quick-title">Open Textbook</div>
+          <div class="wc-quick-desc">Browse your library and study alongside AI</div>
         </div>
-        <div class="streak-cta">Continue →</div>
-      </div>
-
-      <!-- Dual CTA — MAIN ACTIONS -->
-      <div class="wc-cta-row">
-        <button class="wc-cta-primary" onclick="sfOpenFlow()">
-          <div class="wc-cta-icon" style="background:linear-gradient(135deg,#f0b429,#a855f7);">🎯</div>
-          <div class="wc-cta-text">
-            <span class="wc-cta-label">I have an exam coming up</span>
-            <span class="wc-cta-sub">Upload slides → reviewer, flashcards &amp; quiz in 60 sec</span>
-          </div>
-          <svg class="wc-cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-        <button class="wc-cta-secondary" onclick="document.querySelector('.wc-books-section') && document.querySelector('.wc-books-section').scrollIntoView({behavior:'smooth'})">
-          <div class="wc-cta-icon" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);">📖</div>
-          <div class="wc-cta-text">
-            <span class="wc-cta-label">Browse textbooks</span>
-            <span class="wc-cta-sub">Pick a book &amp; start asking questions</span>
-          </div>
-          <svg class="wc-cta-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-      </div>
-
-    </div><!-- end wc-hero -->
-
-    <!-- ══ BOOKS SECTION — scrollable ══ -->
-    <div class="welcome-content wc-books-section">
-
-      <!-- Section label -->
-      <div class="wc-section-label">
-        <div class="wc-section-line"></div>
-        <span>Choose your textbook</span>
-        <div class="wc-section-line"></div>
-      </div>
-
-      <!-- Subject filter pills -->
-      <div class="wbp-pills" id="wbp-pills">
-        <button class="wbp-pill wbp-pill-active" onclick="wbpSetCat('all',this)">All</button>
-        <button class="wbp-pill" onclick="wbpSetCat('chemistry',this)">Chemistry</button>
-        <button class="wbp-pill" onclick="wbpSetCat('anatomy',this)">Anatomy</button>
-        <button class="wbp-pill" onclick="wbpSetCat('other',this)">More coming</button>
-      </div>
-
-      <!-- Book grid -->
-      <div class="wbp-grid" id="wbp-grid">
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('zumdahl')">
-          <div class="wbp-cover"><img src="/public/covers/zumdahl.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📗'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">General Chemistry</div>
-            <div class="wbp-author">Zumdahl &amp; Zumdahl</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('klein')">
-          <div class="wbp-cover"><img src="/public/covers/klein.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📙'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Organic Chemistry</div>
-            <div class="wbp-author">David Klein</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('atkins')">
-          <div class="wbp-cover"><img src="/public/covers/atkins.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📘'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Physical Chemistry</div>
-            <div class="wbp-author">Atkins &amp; de Paula</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="chemistry" onclick="selectBook('harris')">
-          <div class="wbp-cover"><img src="/public/covers/harris.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='📒'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Quantitative Analysis</div>
-            <div class="wbp-author">Daniel C. Harris</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="anatomy" onclick="selectBook('anaphy2e')">
-          <div class="wbp-cover"><img src="/public/covers/anaphy2e.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='🫀'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Anatomy &amp; Physiology</div>
-            <div class="wbp-author">Patton &amp; Thibodeau</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <button class="wbp-book" data-cat="anatomy" onclick="selectBook('netter')">
-          <div class="wbp-cover"><img src="/public/covers/netter.jpg" alt="" loading="lazy" onerror="this.parentElement.innerHTML='🧬'"></div>
-          <div class="wbp-info">
-            <div class="wbp-title">Atlas of Human Anatomy</div>
-            <div class="wbp-author">Frank H. Netter</div>
-            <div class="wbp-badge wbp-avail">✓ Ready</div>
-          </div>
-        </button>
-
-        <!-- Coming Soon -->
-        <div class="wbp-book wbp-soon" data-cat="other">
-          <div class="wbp-cover wbp-cover-placeholder">📚</div>
-          <div class="wbp-info">
-            <div class="wbp-title">Campbell Biology</div>
-            <div class="wbp-author">Urry et al.</div>
-            <div class="wbp-badge wbp-coming">⏳ Soon</div>
-          </div>
+        <div class="wc-quick-card" onclick="typeof sfToolFlashcards==='function'?sfToolFlashcards():document.getElementById('chat-input')&&(document.getElementById('chat-input').value='Generate flashcards on ',document.getElementById('chat-input').focus())">
+          <div class="wc-quick-icon wc-qi-violet">🃏</div>
+          <div class="wc-quick-title">Flashcards</div>
+          <div class="wc-quick-desc">Generate and review study cards from any chapter</div>
         </div>
-
-        <div class="wbp-book wbp-soon" data-cat="other">
-          <div class="wbp-cover wbp-cover-placeholder">📚</div>
-          <div class="wbp-info">
-            <div class="wbp-title">Fundamentals of Nursing</div>
-            <div class="wbp-author">Potter &amp; Perry</div>
-            <div class="wbp-badge wbp-coming">⏳ Soon</div>
-          </div>
+        <div class="wc-quick-card" onclick="uploadPDFFromWelcome()">
+          <div class="wc-quick-icon wc-qi-teal">⬆️</div>
+          <div class="wc-quick-title">Upload PDF</div>
+          <div class="wc-quick-desc">Add your own notes or textbooks to chat with</div>
         </div>
-
-      </div><!-- end wbp-grid -->
-
-      <!-- Footer -->
-      <div class="wbp-footer">
-        <span class="wbp-divider-label">Don't see your book?</span>
-        <button class="wbp-upload-btn" onclick="uploadPDFFromWelcome()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-          Upload your own PDF
-        </button>
-        <button class="wbp-browse-all-btn" onclick="window.libraryPageOpen()">View full library →</button>
       </div>
 
-      <!-- Exam setup CTA (shown by JS after sfInit) -->
-      <div id="sf-inline-cta" class="sf-inline-cta" style="display:none;">
-        <div class="sf-cta-left">
-          <span class="sf-cta-icon">🎯</span>
-          <div>
-            <div class="sf-cta-title">Want to ace your next exam?</div>
-            <div class="sf-cta-sub">Set up a study plan — takes 60 seconds.</div>
-          </div>
-        </div>
-        <button class="sf-cta-btn" onclick="sfOpenFlow()">Set up exam →</button>
-        <button class="sf-cta-close" onclick="this.closest('#sf-inline-cta').style.display='none'" title="Dismiss">✕</button>
+      <!-- Prompt Chips -->
+      <div class="wc-prompts-label">TRY ASKING</div>
+      <div class="wc-prompts-row">
+        <button class="wc-prompt-chip" onclick="wcUsePrompt(this.textContent)">Explain Le Chatelier's principle</button>
+        <button class="wc-prompt-chip" onclick="wcUsePrompt(this.textContent)">Summarize Chapter 5 of Atkins</button>
+        <button class="wc-prompt-chip" onclick="wcUsePrompt(this.textContent)">Generate flashcards on thermodynamics</button>
+        <button class="wc-prompt-chip" onclick="wcUsePrompt(this.textContent)">What is Gibbs free energy?</button>
+        <button class="wc-prompt-chip" onclick="wcUsePrompt(this.textContent)">Quiz me on organic reactions</button>
+        <button class="wc-prompt-chip" onclick="wcUsePrompt(this.textContent)">Compare SN1 vs SN2 mechanisms</button>
       </div>
 
-    </div><!-- end wc-books-section -->
+    </div><!-- end wc-home-content -->
+
+    <!-- Hidden: keep wbp-grid in DOM so JS that references it doesn't break -->
+    <div id="wbp-grid" style="display:none;">
+      <button class="wbp-book" data-cat="chemistry" onclick="selectBook('zumdahl')" style="display:none;"></button>
+      <button class="wbp-book" data-cat="chemistry" onclick="selectBook('klein')" style="display:none;"></button>
+      <button class="wbp-book" data-cat="chemistry" onclick="selectBook('atkins')" style="display:none;"></button>
+      <button class="wbp-book" data-cat="chemistry" onclick="selectBook('harris')" style="display:none;"></button>
+      <button class="wbp-book" data-cat="anatomy" onclick="selectBook('anaphy2e')" style="display:none;"></button>
+      <button class="wbp-book" data-cat="anatomy" onclick="selectBook('netter')" style="display:none;"></button>
+    </div>
+    <!-- Hidden: keep sf-inline-cta in DOM for JS -->
+    <div id="sf-inline-cta" style="display:none;"></div>
+
   </div><!-- end sf-original-welcome -->
 
-  <!-- wbp filter script -->
   <script>
-  function wbpSetCat(cat, btn) {
-    document.querySelectorAll('.wbp-pill').forEach(p => p.classList.remove('wbp-pill-active'));
-    btn.classList.add('wbp-pill-active');
-    document.querySelectorAll('#wbp-grid .wbp-book').forEach(card => {
-      var cardCat = card.getAttribute('data-cat');
-      var show = (cat === 'all') || (cardCat === cat);
-      card.style.display = show ? '' : 'none';
-    });
+  // Send ask from welcome box
+  function wcSendAsk() {
+    var val = document.getElementById('wc-ask-input').value.trim();
+    if (!val) return;
+    // Hide welcome, show main workspace, send the message
+    document.getElementById('welcome-screen').classList.add('hidden');
+    document.getElementById('main-container').style.display = 'flex';
+    if (window._generalChatMode) {
+      enterWorkspace && enterWorkspace();
+    } else {
+      createNewChat && createNewChat();
+      enterWorkspace && enterWorkspace();
+    }
+    // Populate and submit
+    setTimeout(function() {
+      var inp = document.getElementById('chat-input');
+      if (inp) {
+        inp.value = val;
+        inp.dispatchEvent(new Event('input'));
+        sendMessage && sendMessage();
+      }
+    }, 80);
   }
+
+  // Use a prompt chip
+  function wcUsePrompt(text) {
+    var inp = document.getElementById('wc-ask-input');
+    if (inp) { inp.value = text; inp.focus(); inp.style.height = 'auto'; inp.style.height = inp.scrollHeight + 'px'; }
+  }
+
+  // Toggle general AI mode from welcome
+  function wcToggleGeneral() {
+    var pill = document.getElementById('wc-general-pill');
+    window._generalChatMode = !window._generalChatMode;
+    pill.classList.toggle('active', !!window._generalChatMode);
+    try { sessionStorage.setItem('chunks_general_mode', window._generalChatMode ? '1' : '0'); } catch(e) {}
+  }
+
+  // Update book pill label when a book is loaded
+  function wcUpdateBookPill(bookName) {
+    var lbl = document.getElementById('wc-book-pill-label');
+    if (lbl && bookName) lbl.textContent = bookName;
+  }
+
+  // wbpSetCat stub — keeps any JS that calls it from throwing
+  function wbpSetCat(cat, btn) {}
   </script>
+
+
 
   <!-- ── SYNCHRONOUS WELCOME REVEAL ─────────────────────────────────────
        Runs while HTML is still being parsed — before any browser paint.
