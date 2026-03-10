@@ -3649,6 +3649,15 @@
   // CHAT HISTORY MANAGEMENT
   let currentChatId = null;
   let chatSessions = {};
+  // Expose so clearAllChats (outside IIFE) can reset them
+  Object.defineProperty(window, '_currentChatId', {
+    get: function() { return currentChatId; },
+    set: function(v) { currentChatId = v; }
+  });
+  Object.defineProperty(window, '_chatSessions', {
+    get: function() { return chatSessions; },
+    set: function(v) { chatSessions = v; }
+  });
 
   // ── PDF IndexedDB Cache ────────────────────────────────
   const IDB_NAME = 'chunks_pdf_cache', IDB_STORE = 'pdfs', IDB_VER = 1;
@@ -7816,11 +7825,11 @@ function exportChats() {
 function clearAllChats() {
   if (!confirm('Clear ALL chat history? This cannot be undone.')) return;
   localStorage.removeItem('chunks_chat_sessions');
-  if (typeof chatSessions !== 'undefined') { chatSessions = {}; }
-  // Reset currentChatId so createNewChat() starts fresh
-  if (typeof currentChatId !== 'undefined') { currentChatId = null; }
+  // Reset via window-exposed references (currentChatId/chatSessions live inside the IIFE)
+  if (typeof window._chatSessions !== 'undefined') { window._chatSessions = {}; }
+  if (typeof window._currentChatId !== 'undefined') { window._currentChatId = null; }
   try { sessionStorage.removeItem('chunks_last_chat_id'); } catch(e) {}
-  // Go home first to restore full layout, then create a new chat
+  // Go home to restore full layout cleanly
   if (typeof goHome === 'function') goHome();
   if (typeof displayChatHistory === 'function') displayChatHistory();
   closeSettingsModal('modal-settings');
@@ -9684,6 +9693,7 @@ function _showUpgradeNudge() {
     var _origFcOpen = window.fcPageOpen;
     window.fcPageOpen = function (cards, topic) {
       setActiveNav('flashcards');
+      if (typeof window.ws2SetActiveTab === 'function') window.ws2SetActiveTab('flashcards');
       if (_origFcOpen) return _origFcOpen.call(this, cards, topic);
     };
 
@@ -10205,6 +10215,7 @@ function _showUpgradeNudge() {
 
     /* active nav */
     if (typeof window.setActiveNav === 'function') window.setActiveNav('library');
+    if (typeof window.ws2SetActiveTab === 'function') window.ws2SetActiveTab('library');
 
     /* reset search + filter */
     var inp = document.getElementById('lib-page-search');
