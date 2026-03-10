@@ -159,6 +159,7 @@
     var pct=nextLvl?Math.round(((xp-lvl.min)/(nextLvl.min-lvl.min))*100):100;
     var streak=p.streak||0;
     var bar=document.getElementById('chunks-xp-bar');
+    var isNew=!bar;
     if(!bar){
       var anchor=document.querySelector('.sidebar-profile')||document.querySelector('.sidebar-bottom')||document.getElementById('chat-history-sidebar');
       if(!anchor)return;
@@ -166,6 +167,8 @@
       bar.style.cssText='padding:10px 14px 6px;border-top:1px solid rgba(255,255,255,.06);';
       anchor.appendChild(bar);
     }
+    // Start fill at 0 on first render, animate to real value
+    var fillPct=isNew?0:pct;
     bar.innerHTML=
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">'+
         '<div style="display:flex;align-items:center;gap:6px;">'+
@@ -178,9 +181,10 @@
         '</div>'+
       '</div>'+
       '<div style="height:4px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden;">'+
-        '<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,'+lvl.color+',rgba(255,255,255,.45));border-radius:100px;transition:width .6s ease;"></div>'+
+        '<div id="chunks-xp-bar-fill" style="height:100%;width:'+fillPct+'%;background:linear-gradient(90deg,'+lvl.color+',rgba(255,255,255,.45));border-radius:100px;transition:width .6s ease;"></div>'+
       '</div>'+
-      (nextLvl?'<div style="font-size:10px;color:rgba(255,255,255,.2);margin-top:3px;text-align:right;">Next: '+nextLvl.label+' ('+( nextLvl.min-xp)+' XP)</div>':'');
+      (nextLvl?'<div style="font-size:10px;color:rgba(255,255,255,.2);margin-top:3px;text-align:right;">Next: '+nextLvl.label+' ('+(nextLvl.min-xp)+' XP)</div>':'');
+    if(isNew){setTimeout(function(){var f=document.getElementById('chunks-xp-bar-fill');if(f)f.style.width=pct+'%';},120);}
   }
 
   function _patchHandleAnswer(){
@@ -404,6 +408,8 @@
     setTimeout(_patchTools,500);
     setTimeout(_renderXPBar,1500);
     setInterval(_renderXPBar,60000);
+    // Expose so external code (clearProgress) can re-render the bar
+    window._renderXPBar = _renderXPBar;
     var _origGoHome=window.goHome;
     if(typeof _origGoHome==='function'){
       window.goHome=function(){_showSessionSummary();return _origGoHome.apply(this,arguments);};

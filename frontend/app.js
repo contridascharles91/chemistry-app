@@ -3799,11 +3799,21 @@
 
     // ── HASH ROUTING: Restore workspace view on page refresh ──────────
     try {
-      if (window.location.hash === '#workspace') {
-        const lastChatId  = sessionStorage.getItem('chunks_last_chat_id');
-        const generalMode = sessionStorage.getItem('chunks_general_mode') === '1';
-        if (!lastChatId && !generalMode) {
-          // No saved chat session — fall back to welcome screen and clear stale hash
+      const h = window.location.hash;
+      const lastChatId  = sessionStorage.getItem('chunks_last_chat_id');
+      const generalMode = sessionStorage.getItem('chunks_general_mode') === '1';
+
+      if (h === '#general-ai' || (h === '#workspace' && generalMode)) {
+        // Restore General AI chat mode
+        if (lastChatId || generalMode) {
+          // Session restore code handles it below — just set nav state early
+          window._generalChatMode = true;
+          setTimeout(() => {
+            if (typeof window.setActiveNav === 'function') window.setActiveNav('general-ai');
+            if (typeof window.ws2SetActiveTab === 'function') window.ws2SetActiveTab('general-ai');
+          }, 100);
+        } else {
+          // No session — go home and clear stale hash
           setTimeout(() => {
             const noFlash = document.getElementById('__no-flash');
             if (noFlash) noFlash.remove();
@@ -3811,14 +3821,23 @@
             if (typeof goHome === 'function') goHome();
           }, 300);
         }
-        // (If lastChatId/generalMode exist, the auth/session restore code handles it)
+      } else if (h === '#workspace') {
+        if (!lastChatId && !generalMode) {
+          // Stale hash with no session — go home
+          setTimeout(() => {
+            const noFlash = document.getElementById('__no-flash');
+            if (noFlash) noFlash.remove();
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e2) {}
+            if (typeof goHome === 'function') goHome();
+          }, 300);
+        }
       }
     } catch(e) {}
 
-    // ── Handle browser back button clearing #workspace ─────────────
+    // ── Handle browser back button clearing workspace hashes ───────
     window.addEventListener('hashchange', function() {
-      if (!window.location.hash || window.location.hash === '') {
-        // Hash was removed (back button from #workspace) → go to welcome
+      const h = window.location.hash;
+      if (!h || h === '') {
         if (document.body.classList.contains('workspace-active')) {
           if (typeof goHome === 'function') goHome();
         }
@@ -4229,6 +4248,8 @@ function displayChatHistory() {
 
   async function _loadChatSessionsFromCloud() {
     if (!currentUser || !currentUser.email || isGuestMode) return false;
+    // If user explicitly cleared chat, don't restore from cloud this session
+    try { if (sessionStorage.getItem('chunks_chats_cleared') === '1') return false; } catch(e) {}
     try {
       const sb = await getSupabase();
       const { data, error } = await sb
@@ -7088,7 +7109,10 @@ function filterChatHistory() {
 
 function enterWorkspace() {
   document.body.classList.add('workspace-active');
-  try { history.replaceState(null, '', '#workspace'); } catch(e) {}
+  try {
+    const hash = window._generalChatMode ? '#general-ai' : '#workspace';
+    history.replaceState(null, '', hash);
+  } catch(e) {}
 }
 
 function leaveWorkspace() {
@@ -7097,9 +7121,10 @@ function leaveWorkspace() {
   const mh = document.getElementById('main-header');
   if (mc) mc.style.display = 'none';
   if (mh) mh.style.display = 'none';
-  // Always clear the #workspace hash when leaving so refresh doesn't restore wrong page
+  // Clear any workspace-related hashes
   try {
-    if (window.location.hash === '#workspace') {
+    const h = window.location.hash;
+    if (h === '#workspace' || h === '#general-ai') {
       history.replaceState(null, '', window.location.pathname + window.location.search);
     }
   } catch(e) {}
@@ -7840,6 +7865,22 @@ function clearAllChats() {
   if (typeof window._chatSessions !== 'undefined') { window._chatSessions = {}; }
   if (typeof window._currentChatId !== 'undefined') { window._currentChatId = null; }
   try { sessionStorage.removeItem('chunks_last_chat_id'); } catch(e) {}
+  // Set flag so cloud sync doesn't restore cleared chats this session
+  try { sessionStorage.setItem('chunks_chats_cleared', '1'); } catch(e) {}
+  // Also wipe the cloud copy so it doesn't come back on next refresh
+  (async function() {
+    try {
+      const user = typeof currentUser !== 'undefined' ? currentUser : null;
+      if (user && user.email && typeof getSupabase === 'function') {
+        const sb = await getSupabase();
+        await sb.from('chat_sessions').upsert({
+          user_email: user.email,
+          sessions_json: '{}',
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_email' });
+      }
+    } catch(e) {}
+  })();
   // Go home to restore full layout cleanly
   if (typeof goHome === 'function') goHome();
   if (typeof displayChatHistory === 'function') displayChatHistory();
@@ -7849,14 +7890,21 @@ function clearAllChats() {
 
 function clearProgress() {
   if (!confirm('Clear all progress, flashcards and exam results? This cannot be undone.')) return;
-  // Progress tracking
+  // Progress tracking (XP, streak, levels)
   localStorage.removeItem('chunks_progress');
+  localStorage.removeItem('chunks_sr_data');
+  localStorage.removeItem('chunksProgress_global');
   // Saved flashcard sets
   localStorage.removeItem('chunks_saved_flashcards');
   // Saved exam results
   localStorage.removeItem('chunks_saved_exams');
+  // Set flag so nothing re-populates from cloud this session
+  try { sessionStorage.setItem('chunks_progress_cleared', '1'); } catch(e) {}
+  // Re-render XP bar at zero
+  const xpBar = document.getElementById('chunks-xp-bar');
+  if (xpBar) xpBar.remove();
+  if (typeof window._renderXPBar === 'function') setTimeout(window._renderXPBar, 100);
   // NOTE: daily message counters (chunks_free_msgs_*) are intentionally NOT cleared here.
-  // They are enforced server-side and the local copy is display-only.
   showToast('Progress, flashcards & exam results cleared ✓');
 }
 
@@ -9686,10 +9734,16 @@ function _showUpgradeNudge() {
       if (_origGoHome) return _origGoHome.apply(this, arguments);
     };
 
-    /* createNewChat → home */
+    /* createNewChat → set nav based on mode */
     var _origNewChat = window.createNewChat;
     window.createNewChat = function () {
-      setActiveNav('home');
+      // If launching in general AI mode, highlight that nav item
+      if (window._generalChatMode) {
+        setActiveNav('general-ai');
+        if (typeof window.ws2SetActiveTab === 'function') window.ws2SetActiveTab('general-ai');
+      } else {
+        setActiveNav('home');
+      }
       if (_origNewChat) return _origNewChat.apply(this, arguments);
     };
 

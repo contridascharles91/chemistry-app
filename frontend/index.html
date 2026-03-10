@@ -1590,9 +1590,10 @@
 
   // ── ws2NavHome: forcefully close all pages and show welcome screen ──
   function ws2NavHome() {
-    // Step 0: clear #workspace hash immediately
+    // Step 0: clear workspace hashes immediately
     try {
-      if (window.location.hash === '#workspace') {
+      const h = window.location.hash;
+      if (h === '#workspace' || h === '#general-ai') {
         history.replaceState(null, '', window.location.pathname + window.location.search);
       }
     } catch(e) {}
@@ -1648,7 +1649,7 @@
   // Expose so app.js / page open functions can call it
   window.ws2SetActiveTab = ws2SetActiveTab;
 
-  // ── Default: chat history is always empty (cleared every page load) ──
+  // ── Chat always fresh on every page load — no cloud restore ─────────
   (function() {
     var CHAT_KEYS = [
       'chunks_chat_history',
@@ -1657,6 +1658,10 @@
       'chunks_last_chat_id'
     ];
     CHAT_KEYS.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
+    // Block cloud sync from restoring cleared data this session
+    try { sessionStorage.setItem('chunks_chats_cleared', '1'); } catch(e) {}
+    // Clear general mode so General AI nav doesn't stay highlighted from last session
+    try { sessionStorage.removeItem('chunks_general_mode'); } catch(e) {}
   })();
 
   // ── Zoom scrollbar: appears automatically when browser is zoomed ──
