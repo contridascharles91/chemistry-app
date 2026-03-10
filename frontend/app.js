@@ -3386,6 +3386,12 @@
       const chat = document.getElementById('chat-messages');
       const typing = document.getElementById('typing-indicator');
       
+      // Ensure layout is visible before clearing
+      const mainHeader = document.getElementById('main-header');
+      const mainCont = document.getElementById('main-container');
+      if (mainHeader) { mainHeader.classList.add('active'); mainHeader.style.display = 'flex'; }
+      if (mainCont)   { mainCont.classList.add('active');   mainCont.style.display = 'flex'; }
+
       // Remove all messages except typing indicator
       const messages = chat.querySelectorAll('.message');
       messages.forEach(msg => msg.remove());
@@ -3818,28 +3824,9 @@
     }
   }
 
-  // Hover-to-open sidebar
+  // Hover-to-open sidebar — DISABLED: sidebar only opens on explicit click
   (function() {
-    const trigger = document.getElementById('sidebar-hover-trigger');
-    const sidebar = document.getElementById('chat-history-sidebar');
-    let closeTimer = null;
-
-    function openSidebar() {
-      clearTimeout(closeTimer);
-      sidebar.classList.add('hover-open');
-    }
-
-    function schedulClose() {
-      closeTimer = setTimeout(() => {
-        if (!sidebar.classList.contains('open')) {
-          sidebar.classList.remove('hover-open');
-        }
-      }, 200);
-    }
-
-    trigger.addEventListener('mouseenter', openSidebar);
-    sidebar.addEventListener('mouseenter', openSidebar);
-    sidebar.addEventListener('mouseleave', schedulClose);
+    // hover-open removed intentionally; use toggleChatHistory() or the toggle button
   })();
 
   function createNewChat() {
@@ -7830,7 +7817,11 @@ function clearAllChats() {
   if (!confirm('Clear ALL chat history? This cannot be undone.')) return;
   localStorage.removeItem('chunks_chat_sessions');
   if (typeof chatSessions !== 'undefined') { chatSessions = {}; }
-  if (typeof createNewChat === 'function') createNewChat();
+  // Reset currentChatId so createNewChat() starts fresh
+  if (typeof currentChatId !== 'undefined') { currentChatId = null; }
+  try { sessionStorage.removeItem('chunks_last_chat_id'); } catch(e) {}
+  // Go home first to restore full layout, then create a new chat
+  if (typeof goHome === 'function') goHome();
   if (typeof displayChatHistory === 'function') displayChatHistory();
   closeSettingsModal('modal-settings');
   showToast('Chat history cleared');

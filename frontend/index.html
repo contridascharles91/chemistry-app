@@ -276,6 +276,10 @@
      ═══════════════════════════════════════════════════════ -->
 <div class="ws2-topbar" id="global-topbar">
   <div class="ws2-topbar-left">
+    <!-- Sidebar toggle — always visible -->
+    <button class="ws2-sidebar-toggle" onclick="toggleChatHistory()" title="Toggle sidebar" aria-label="Toggle sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="ws2-topbar-logo" onclick="ws2NavHome()">
       <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
         <defs>
@@ -292,11 +296,15 @@
     <nav class="ws2-topbar-nav">
       <button class="ws2-topnav-btn" id="topnav-home" onclick="ws2NavHome()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        Homepage
+        Home
       </button>
-      <button class="ws2-topnav-btn" id="topnav-workspace" onclick="if(typeof enterChatFromWelcome==='function')enterChatFromWelcome();else if(typeof createNewChat==='function')createNewChat();">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Study Workspace
+      <button class="ws2-topnav-btn" id="topnav-general-ai" onclick="if(typeof ws2SetGeneralMode==='function')ws2SetGeneralMode();else{window._generalChatMode=true;if(typeof createNewChat==='function')createNewChat();}">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        General AI
+      </button>
+      <button class="ws2-topnav-btn" id="topnav-library" onclick="window.libraryPageOpen&&window.libraryPageOpen();">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        PDF Library
       </button>
       <button class="ws2-topnav-btn" id="topnav-flashcards" onclick="window.fcPageOpen&&window.fcPageOpen();ws2SetActiveTab('flashcards')">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -383,9 +391,13 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span class="sidebar-label">Home</span>
     </div>
-    <div class="sidebar-item" id="nav-library" data-nav="library" onclick="window.libraryPageOpen()" title="Library">
-      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      <span class="sidebar-label">Library</span>
+    <div class="sidebar-item" id="nav-general-ai" data-nav="general-ai" onclick="if(typeof ws2SetGeneralMode==='function')ws2SetGeneralMode();else{window._generalChatMode=true;if(typeof createNewChat==='function')createNewChat();}" title="General AI Chat">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span class="sidebar-label">General AI</span>
+    </div>
+    <div class="sidebar-item" id="nav-library" data-nav="library" onclick="window.libraryPageOpen()" title="PDF Library">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span class="sidebar-label">PDF Library</span>
     </div>
     <div class="sidebar-item" id="nav-flashcards" data-nav="flashcards" onclick="window.fcPageOpen()" title="Flashcards">
       <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
