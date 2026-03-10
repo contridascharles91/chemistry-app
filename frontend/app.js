@@ -3803,23 +3803,27 @@
         const lastChatId  = sessionStorage.getItem('chunks_last_chat_id');
         const generalMode = sessionStorage.getItem('chunks_general_mode') === '1';
         if (!lastChatId && !generalMode) {
+          // No saved chat session — fall back to welcome screen and clear stale hash
           setTimeout(() => {
-            const ws = document.getElementById('welcome-screen');
-            const mh = document.getElementById('main-header');
-            const mc = document.getElementById('main-container');
             const noFlash = document.getElementById('__no-flash');
-            if (ws) ws.classList.add('hidden');
-            if (mh) mh.style.display = 'none';
-            if (mc) { mc.style.display = 'flex'; mc.classList.add('chat-fullscreen'); }
             if (noFlash) noFlash.remove();
-            window._generalChatMode = true;
-            try { sessionStorage.setItem('chunks_general_mode', '1'); } catch(e2) {}
-            if (typeof createNewChat === 'function') createNewChat();
-            if (typeof enterWorkspace === 'function') enterWorkspace();
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e2) {}
+            if (typeof goHome === 'function') goHome();
           }, 300);
         }
+        // (If lastChatId/generalMode exist, the auth/session restore code handles it)
       }
     } catch(e) {}
+
+    // ── Handle browser back button clearing #workspace ─────────────
+    window.addEventListener('hashchange', function() {
+      if (!window.location.hash || window.location.hash === '') {
+        // Hash was removed (back button from #workspace) → go to welcome
+        if (document.body.classList.contains('workspace-active')) {
+          if (typeof goHome === 'function') goHome();
+        }
+      }
+    });
   });
 
   function toggleChatHistory() {
@@ -7089,9 +7093,16 @@ function enterWorkspace() {
 
 function leaveWorkspace() {
   document.body.classList.remove('workspace-active');
-  document.getElementById('main-container').style.display = 'none';
-  document.getElementById('main-header').style.display = 'none';
-  try { history.replaceState(null, '', window.location.pathname); } catch(e) {}
+  const mc = document.getElementById('main-container');
+  const mh = document.getElementById('main-header');
+  if (mc) mc.style.display = 'none';
+  if (mh) mh.style.display = 'none';
+  // Always clear the #workspace hash when leaving so refresh doesn't restore wrong page
+  try {
+    if (window.location.hash === '#workspace') {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  } catch(e) {}
 }
 
 function goHome() {

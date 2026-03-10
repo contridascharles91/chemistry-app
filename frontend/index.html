@@ -1590,6 +1590,13 @@
 
   // ── ws2NavHome: forcefully close all pages and show welcome screen ──
   function ws2NavHome() {
+    // Step 0: clear #workspace hash immediately
+    try {
+      if (window.location.hash === '#workspace') {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    } catch(e) {}
+
     // Step 1: hide every SPA page
     var pageIds = ['fc-page','sp-page','library-page','main-container','main-header'];
     pageIds.forEach(function(id) {
